@@ -1,0 +1,185 @@
+{
+  "raw_entries": 155,
+  "unique_terms": 149,
+  "duplicate_terms_merged": 6,
+  "entries_with_conflicts": 6,
+  "by_category": {
+    "abbreviation": 91,
+    "equipment": 47,
+    "barrier": 11
+  },
+  "by_safety_signal": {
+    "energy_cue": 60,
+    "control_present": 26,
+    "None": 20,
+    "pseudo_control": 17,
+    "exposure_cue": 15,
+    "statement_cue": 7,
+    "outcome_cue": 3,
+    "release_cue": 1
+  },
+  "by_lsr": {
+    "None": 68,
+    "Line of Fire": 14,
+    "Safe Mechanical Lifting": 13,
+    "Bypassing Safety Controls": 12,
+    "Energy Isolation": 11,
+    "Hot Work": 8,
+    "Driving": 6,
+    "Work Authorisation": 6,
+    "Working at Height": 6,
+    "Confined Space": 5
+  },
+  "unknown_safety_signal_values": {},
+  "schema_problems": [],
+  "total_variants": 972,
+  "variant_collisions": [
+    {
+      "variant": "DG exhaust",
+      "terms": [
+        "CO",
+        "DG"
+      ]
+    },
+    {
+      "variant": "HSE officer",
+      "terms": [
+        "HSE",
+        "SO"
+      ]
+    },
+    {
+      "variant": "rig I/C",
+      "terms": [
+        "I/C",
+        "TP"
+      ]
+    },
+    {
+      "variant": "fire extinguisher",
+      "terms": [
+        "FE",
+        "fire extinguisher"
+      ]
+    },
+    {
+      "variant": "DCP",
+      "terms": [
+        "DCP",
+        "fire extinguisher"
+      ]
+    },
+    {
+      "variant": "अग्निशामक",
+      "terms": [
+        "FE",
+        "fire extinguisher"
+      ]
+    },
+    {
+      "variant": "gas detector",
+      "terms": [
+        "GD",
+        "gas detector"
+      ]
+    },
+    {
+      "variant": "Lel meter",
+      "terms": [
+        "LEL",
+        "gas detector"
+      ]
+    },
+    {
+      "variant": "choke manifold",
+      "terms": [
+        "BOP",
+        "choke manifold"
+      ]
+    },
+    {
+      "variant": "DB box",
+      "terms": [
+        "DB",
+        "DB box"
+      ]
+    },
+    {
+      "variant": "distribution board",
+      "terms": [
+        "DB",
+        "DB box"
+      ]
+    },
+    {
+      "variant": "flowline",
+      "terms": [
+        "P/L",
+        "flowline"
+      ]
+    },
+    {
+      "variant": "flow line",
+      "terms": [
+        "P/L",
+        "flowline"
+      ]
+    },
+    {
+      "variant": "poclain",
+      "terms": [
+        "jcb",
+        "poclain"
+      ]
+    },
+    {
+      "variant": "sucker rod pump",
+      "terms": [
+        "SRP",
+        "sucker rod pump"
+      ]
+    },
+    {
+      "variant": "SRP",
+      "terms": [
+        "SRP",
+        "sucker rod pump"
+      ]
+    },
+    {
+      "variant": "pump jack",
+      "terms": [
+        "SRP",
+        "sucker rod pump"
+      ]
+    },
+    {
+      "variant": "top drive",
+      "terms": [
+        "TDS",
+        "top drive"
+      ]
+    },
+    {
+      "variant": "TDS",
+      "terms": [
+        "TDS",
+        "top drive"
+      ]
+    },
+    {
+      "variant": "top drive system",
+      "terms": [
+        "TDS",
+        "top drive"
+      ]
+    },
+    {
+      "variant": "WLU",
+      "terms": [
+        "WL",
+        "wireline unit"
+      ]
+    }
+  ]
+}

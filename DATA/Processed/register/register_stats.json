@@ -1,0 +1,62 @@
+[
+  {
+    "file": "near_miss_report.csv",
+    "column_mapping": {
+      "S/No.": "sno",
+      "Date Raised": "date",
+      "Shift": "shift",
+      "Time (Day/Night)": "time_of_day",
+      "Near miss description (Observation)": "description",
+      "Category": "category",
+      "Near miss Observation": "sub_category",
+      "Area(Location)": "area",
+      "Raised By(Observer)": "observer",
+      "Status": "status",
+      "Corrective action/Follow up": "corrective_action",
+      "Comments": "comments"
+    },
+    "unmapped_columns": [],
+    "raw_rows": 56,
+    "dropped_empty_or_short": 0,
+    "rows": 56,
+    "duplicates": {
+      "exact_duplicates": 0,
+      "near_duplicates": 0,
+      "threshold": 0.85
+    },
+    "category_counts": {
+      "UC": 42,
+      "UA": 14
+    },
+    "sub_category_counts": {
+      "SLIPS AND TRIPS": 31,
+      "NARROW ESCAPE": 12,
+      "FALL RISK": 7,
+      "EQUIPMENT OPERATION AND MAINTENANCE": 2,
+      "FALLING OBJECTS": 2,
+      "RISKY BEHAVIOR": 2
+    },
+    "area_counts": {
+      "PIN LONG": 13,
+      "5 PA": 10,
+      "9 PA": 10,
+      "9 PB": 7,
+      "CORRUGATOR": 6,
+      "6 PAN": 2,
+      "DISPATCH": 2,
+      "9 PB STRAPPING AREA": 1,
+      "CCD BALING MACHINE": 1,
+      "ENGINEERING STORES": 1,
+      "PPO LAMINATOR MACHIN": 1,
+      "REEL GODOWN": 1,
+      "STERIO ROOM": 1
+    },
+    "date_unparsed": 0,
+    "date_year_assumed": 56,
+    "words_min_median_max": [
+      2,
+      9,
+      25
+    ]
+  }
+]

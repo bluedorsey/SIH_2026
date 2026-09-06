@@ -9,3 +9,6 @@ wheels/
 # Virtual environments
 .venv
 .env
+/SERVER/Classfication/Models/
+/DATA/RAW
+/sif_precursor_pipeline_overview.png

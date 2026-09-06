@@ -1,0 +1,535 @@
+{
+  "generated_at": "2026-09-06T13:11:00",
+  "python": "3.10.12",
+  "platform": "Linux-6.8.0-136-generic-x86_64-with-glibc2.35",
+  "args": {
+    "iogp": true,
+    "osha": true,
+    "register": true,
+    "terms": true,
+    "no_unified": false,
+    "osha_all": false,
+    "register_year": 2024,
+    "keep_names": false,
+    "quiet": false
+  },
+  "elapsed_seconds": 91.4,
+  "sources": {
+    "iogp": {
+      "files": [
+        {
+          "file": "2022sf.pdf",
+          "sha256": "07ed3af90a053a4297c5a808e32e467a963a643622eb497b4c41501fca6cf781",
+          "year": 2022,
+          "record_type": "fatal",
+          "pages": 32,
+          "records": 29,
+          "records_with_warnings": 4
+        },
+        {
+          "file": "2022sh.pdf",
+          "sha256": "432ef5eda9b9948c1f0ee0c641cfe5c443ed18be8912dd31b600a0cd194e991a",
+          "year": 2022,
+          "record_type": "hipo",
+          "pages": 86,
+          "records": 105,
+          "records_with_warnings": 17
+        },
+        {
+          "file": "2023fpi.pdf",
+          "sha256": "fe5868c3f2ef45bc486ac1455bacc01a2eaf26fdd8194a05d45e2aadb1c7850b",
+          "year": 2023,
+          "record_type": "permanent_impairment",
+          "pages": 56,
+          "records": 47,
+          "records_with_warnings": 8
+        },
+        {
+          "file": "2023sf.pdf",
+          "sha256": "13b9d9d962867957b1e404d116d9bfee409615d26249dc0f9a64656f2c6f7c6b",
+          "year": 2023,
+          "record_type": "fatal",
+          "pages": 22,
+          "records": 17,
+          "records_with_warnings": 4
+        },
+        {
+          "file": "2023sh.pdf",
+          "sha256": "d0902ca1d21fab9eaeb03a8afc9c5c684b4c8256699a1d9ef7b2cde370c75c78",
+          "year": 2023,
+          "record_type": "hipo",
+          "pages": 112,
+          "records": 131,
+          "records_with_warnings": 49
+        },
+        {
+          "file": "2024fpi.pdf",
+          "sha256": "7d48c3a9bc476b568e0d3ab27727e7f529cd40ae75bca9551fc0229b420566a6",
+          "year": 2024,
+          "record_type": "permanent_impairment",
+          "pages": 42,
+          "records": 34,
+          "records_with_warnings": 1
+        },
+        {
+          "file": "2024sf.pdf",
+          "sha256": "6bf92f4c56d3f593e3c21b6eeeb7f75d35d2a41d084baf5fc85addb3859a1693",
+          "year": 2024,
+          "record_type": "fatal",
+          "pages": 28,
+          "records": 21,
+          "records_with_warnings": 5
+        },
+        {
+          "file": "2024sh.pdf",
+          "sha256": "a81a94536be3fd49238e092789d9fb4af34875eae53689ace62d17fd908193ba",
+          "year": 2024,
+          "record_type": "hipo",
+          "pages": 120,
+          "records": 150,
+          "records_with_warnings": 13
+        },
+        {
+          "file": "2025sf.pdf",
+          "sha256": "f47dad54eba691b760f71cee6e1c0ee70a1cd6b6a57f94bf21576757424d848e",
+          "year": 2025,
+          "record_type": "fatal",
+          "pages": 46,
+          "records": 40,
+          "records_with_warnings": 8
+        },
+        {
+          "file": "2025sh.pdf",
+          "sha256": "6b7a58b533a5651f491eaf5d5cf715d5bd86cf2769085b3803986ebc900f587e",
+          "year": 2025,
+          "record_type": "hipo",
+          "pages": 92,
+          "records": 98,
+          "records_with_warnings": 6
+        }
+      ],
+      "skipped": [
+        {
+          "file": "2023f.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2023fe.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2023s.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2024f.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2024fe.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2024s.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2024sf (1).pdf",
+          "reason": "byte-identical duplicate of 2024sf.pdf"
+        },
+        {
+          "file": "2024sh (1).pdf",
+          "reason": "byte-identical duplicate of 2024sh.pdf"
+        },
+        {
+          "file": "2025ae.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        },
+        {
+          "file": "2025s.pdf",
+          "reason": "not a narrative report (statistics / summary)"
+        }
+      ],
+      "total_records": 672
+    },
+    "osha": {
+      "raw_rows": 105996,
+      "dropped_empty_or_short_narrative": 1,
+      "rows_after_filter": 105995,
+      "oilgas_rows": 2902,
+      "oilgas_by_sector": {
+        "support_activities_oil_gas": 1896,
+        "drilling_oil_gas_wells": 663,
+        "oil_gas_extraction": 191,
+        "petroleum_refineries": 152
+      },
+      "oilgas_by_year": {
+        "2018": 408,
+        "2017": 385,
+        "2019": 370,
+        "2015": 336,
+        "2016": 246,
+        "2022": 229,
+        "2023": 213,
+        "2024": 202,
+        "2025": 194,
+        "2021": 161,
+        "2020": 158
+      },
+      "oilgas_severity": {
+        "hospitalized": 2062,
+        "amputation": 837,
+        "loss_of_eye": 3
+      },
+      "oilgas_duplicates": {
+        "exact_duplicates": 1,
+        "near_duplicates": 0,
+        "threshold": 0.85
+      },
+      "oilgas_unique_for_training": 2901,
+      "date_unparsed": 0,
+      "naics_missing": 2
+    },
+    "register": [
+      {
+        "file": "near_miss_report.csv",
+        "column_mapping": {
+          "S/No.": "sno",
+          "Date Raised": "date",
+          "Shift": "shift",
+          "Time (Day/Night)": "time_of_day",
+          "Near miss description (Observation)": "description",
+          "Category": "category",
+          "Near miss Observation": "sub_category",
+          "Area(Location)": "area",
+          "Raised By(Observer)": "observer",
+          "Status": "status",
+          "Corrective action/Follow up": "corrective_action",
+          "Comments": "comments"
+        },
+        "unmapped_columns": [],
+        "raw_rows": 56,
+        "dropped_empty_or_short": 0,
+        "rows": 56,
+        "duplicates": {
+          "exact_duplicates": 0,
+          "near_duplicates": 0,
+          "threshold": 0.85
+        },
+        "category_counts": {
+          "UC": 42,
+          "UA": 14
+        },
+        "sub_category_counts": {
+          "SLIPS AND TRIPS": 31,
+          "NARROW ESCAPE": 12,
+          "FALL RISK": 7,
+          "EQUIPMENT OPERATION AND MAINTENANCE": 2,
+          "FALLING OBJECTS": 2,
+          "RISKY BEHAVIOR": 2
+        },
+        "area_counts": {
+          "PIN LONG": 13,
+          "5 PA": 10,
+          "9 PA": 10,
+          "9 PB": 7,
+          "CORRUGATOR": 6,
+          "6 PAN": 2,
+          "DISPATCH": 2,
+          "9 PB STRAPPING AREA": 1,
+          "CCD BALING MACHINE": 1,
+          "ENGINEERING STORES": 1,
+          "PPO LAMINATOR MACHIN": 1,
+          "REEL GODOWN": 1,
+          "STERIO ROOM": 1
+        },
+        "date_unparsed": 0,
+        "date_year_assumed": 56,
+        "words_min_median_max": [
+          2,
+          9,
+          25
+        ]
+      }
+    ],
+    "terms": {
+      "raw_entries": 155,
+      "unique_terms": 149,
+      "duplicate_terms_merged": 6,
+      "entries_with_conflicts": 6,
+      "by_category": {
+        "abbreviation": 91,
+        "equipment": 47,
+        "barrier": 11
+      },
+      "by_safety_signal": {
+        "energy_cue": 60,
+        "control_present": 26,
+        "None": 20,
+        "pseudo_control": 17,
+        "exposure_cue": 15,
+        "statement_cue": 7,
+        "outcome_cue": 3,
+        "release_cue": 1
+      },
+      "by_lsr": {
+        "None": 68,
+        "Line of Fire": 14,
+        "Safe Mechanical Lifting": 13,
+        "Bypassing Safety Controls": 12,
+        "Energy Isolation": 11,
+        "Hot Work": 8,
+        "Driving": 6,
+        "Work Authorisation": 6,
+        "Working at Height": 6,
+        "Confined Space": 5
+      },
+      "unknown_safety_signal_values": {},
+      "total_variants": 972,
+      "variant_collisions": [
+        {
+          "variant": "DG exhaust",
+          "terms": [
+            "CO",
+            "DG"
+          ]
+        },
+        {
+          "variant": "HSE officer",
+          "terms": [
+            "HSE",
+            "SO"
+          ]
+        },
+        {
+          "variant": "rig I/C",
+          "terms": [
+            "I/C",
+            "TP"
+          ]
+        },
+        {
+          "variant": "fire extinguisher",
+          "terms": [
+            "FE",
+            "fire extinguisher"
+          ]
+        },
+        {
+          "variant": "DCP",
+          "terms": [
+            "DCP",
+            "fire extinguisher"
+          ]
+        },
+        {
+          "variant": "अग्निशामक",
+          "terms": [
+            "FE",
+            "fire extinguisher"
+          ]
+        },
+        {
+          "variant": "gas detector",
+          "terms": [
+            "GD",
+            "gas detector"
+          ]
+        },
+        {
+          "variant": "Lel meter",
+          "terms": [
+            "LEL",
+            "gas detector"
+          ]
+        },
+        {
+          "variant": "choke manifold",
+          "terms": [
+            "BOP",
+            "choke manifold"
+          ]
+        },
+        {
+          "variant": "DB box",
+          "terms": [
+            "DB",
+            "DB box"
+          ]
+        },
+        {
+          "variant": "distribution board",
+          "terms": [
+            "DB",
+            "DB box"
+          ]
+        },
+        {
+          "variant": "flowline",
+          "terms": [
+            "P/L",
+            "flowline"
+          ]
+        },
+        {
+          "variant": "flow line",
+          "terms": [
+            "P/L",
+            "flowline"
+          ]
+        },
+        {
+          "variant": "poclain",
+          "terms": [
+            "jcb",
+            "poclain"
+          ]
+        },
+        {
+          "variant": "sucker rod pump",
+          "terms": [
+            "SRP",
+            "sucker rod pump"
+          ]
+        },
+        {
+          "variant": "SRP",
+          "terms": [
+            "SRP",
+            "sucker rod pump"
+          ]
+        },
+        {
+          "variant": "pump jack",
+          "terms": [
+            "SRP",
+            "sucker rod pump"
+          ]
+        },
+        {
+          "variant": "top drive",
+          "terms": [
+            "TDS",
+            "top drive"
+          ]
+        },
+        {
+          "variant": "TDS",
+          "terms": [
+            "TDS",
+            "top drive"
+          ]
+        },
+        {
+          "variant": "top drive system",
+          "terms": [
+            "TDS",
+            "top drive"
+          ]
+        },
+        {
+          "variant": "WLU",
+          "terms": [
+            "WL",
+            "wireline unit"
+          ]
+        }
+      ]
+    },
+    "unified": {
+      "total": 3630,
+      "unique": 3620,
+      "duplicates": {
+        "exact_duplicates": 7,
+        "near_duplicates": 3,
+        "threshold": 0.85
+      },
+      "by_source": {
+        "osha_sir": 2902,
+        "iogp": 672,
+        "register": 56
+      },
+      "by_record_type": {
+        "severe_injury": 2902,
+        "hipo": 484,
+        "fatal": 107,
+        "permanent_impairment": 81,
+        "near_miss": 56
+      },
+      "by_teacher_prompt": {
+        "label": 2958,
+        "rewind": 672
+      }
+    }
+  },
+  "outputs": [
+    {
+      "path": "iogp/parse_log.json",
+      "bytes": 3617
+    },
+    {
+      "path": "iogp/records.csv",
+      "bytes": 1763229
+    },
+    {
+      "path": "iogp/records.jsonl",
+      "bytes": 2297533
+    },
+    {
+      "path": "osha/osha_oilgas.csv",
+      "bytes": 2281131
+    },
+    {
+      "path": "osha/osha_oilgas.jsonl",
+      "bytes": 3687322
+    },
+    {
+      "path": "osha/osha_stats.json",
+      "bytes": 784
+    },
+    {
+      "path": "quality_report.md",
+      "bytes": 5262
+    },
+    {
+      "path": "register/near_miss_report_clean.csv",
+      "bytes": 18960
+    },
+    {
+      "path": "register/near_miss_report_clean.jsonl",
+      "bytes": 46324
+    },
+    {
+      "path": "register/register_stats.json",
+      "bytes": 1456
+    },
+    {
+      "path": "terms/glossary_clean.csv",
+      "bytes": 60837
+    },
+    {
+      "path": "terms/glossary_clean.json",
+      "bytes": 106535
+    },
+    {
+      "path": "terms/terms_stats.json",
+      "bytes": 3011
+    },
+    {
+      "path": "terms/variant_lookup.json",
+      "bytes": 27881
+    },
+    {
+      "path": "unified/corpus.csv",
+      "bytes": 1291393
+    },
+    {
+      "path": "unified/corpus.jsonl",
+      "bytes": 4932567
+    },
+    {
+      "path": "unified/teacher_input.jsonl",
+      "bytes": 4053108
+    }
+  ]
+}

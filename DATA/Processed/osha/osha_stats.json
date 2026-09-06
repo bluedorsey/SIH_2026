@@ -1,0 +1,38 @@
+{
+  "raw_rows": 105996,
+  "dropped_empty_or_short_narrative": 1,
+  "rows_after_filter": 105995,
+  "oilgas_rows": 2902,
+  "oilgas_by_sector": {
+    "support_activities_oil_gas": 1896,
+    "drilling_oil_gas_wells": 663,
+    "oil_gas_extraction": 191,
+    "petroleum_refineries": 152
+  },
+  "oilgas_by_year": {
+    "2018": 408,
+    "2017": 385,
+    "2019": 370,
+    "2015": 336,
+    "2016": 246,
+    "2022": 229,
+    "2023": 213,
+    "2024": 202,
+    "2025": 194,
+    "2021": 161,
+    "2020": 158
+  },
+  "oilgas_severity": {
+    "hospitalized": 2062,
+    "amputation": 837,
+    "loss_of_eye": 3
+  },
+  "oilgas_duplicates": {
+    "exact_duplicates": 1,
+    "near_duplicates": 0,
+    "threshold": 0.85
+  },
+  "oilgas_unique_for_training": 2901,
+  "date_unparsed": 0,
+  "naics_missing": 2
+}
