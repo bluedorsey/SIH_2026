@@ -12,3 +12,46 @@ wheels/
 /SERVER/Classfication/Models/
 /DATA/RAW
 /sif_precursor_pipeline_overview.png
+
+# Training artefacts (added 2026-09-06)
+/TRAINING/checkpoints/
+/TRAINING/eval/reports/
+/DATA/distilled/raw/
+/sih_train_bundle.zip
+/sif_models.zip
+
+# Scratch / accidental files (added 2026-09-12)
+/-
+/reply.json
+/classes.txt
+/generate_data.py
+/get_stats.py
+
+# Model checkpoints & Colab bundles - regenerate with TRAINING/pack_for_colab.py
+/checkpoint-*/
+/checkpoint-*.zip
+/sih_train_bundle/
+
+# Pipeline scratch: fetch caches, run logs, half-written outputs
+_textcache/
+/DATA/Processed/pipeline_run.log
+/DATA/Processed/*/*.new.csv
+/DATA/Processed/*/*.new.jsonl
+
+# Bulk v2 source dumps - regenerate with `python -m CLEANING.run_pipeline`
+# (stats.json under each is kept so the row counts stay reviewable)
+/DATA/Processed/alerts/alerts.csv
+/DATA/Processed/alerts/alerts.jsonl
+/DATA/Processed/osha_abstracts/abstracts.csv
+/DATA/Processed/osha_abstracts/abstracts.jsonl
+/DATA/Processed/msha/msha_selected.jsonl
+
+# Distillation scratch: teacher prompt/answer dumps and label-repair snapshots
+/DATA/distilled/offline/
+/DATA/distilled/manual/
+/DATA/distilled/*.jsonl
+/DATA/distilled/gliner/
+/DATA/distilled/setfit/
+
+# Eval report output - regenerate with `python -m INFERENCE.run_all`
+/REPORTS/
