@@ -1,0 +1,43 @@
+{
+  "rows": 3157,
+  "per_source": {
+    "IADC": 751,
+    "IMCA": 2393,
+    "StepChange": 0,
+    "OISD": 13
+  },
+  "duplicates": {
+    "exact_duplicates": 3,
+    "near_duplicates": 49,
+    "threshold": 0.85
+  },
+  "by_record_type": {
+    "injury": 1447,
+    "near_miss": 669,
+    "incident": 568,
+    "fatal": 473
+  },
+  "with_lsr": 3,
+  "lsr_distribution": {
+    "Line of Fire": 2,
+    "Confined Space": 1
+  },
+  "off_domain_marine": 1985,
+  "sections_narrative": 2654,
+  "sections_what_went_wrong": 1439,
+  "text_from_attachment": 763,
+  "by_actual_outcome": {
+    "None": 1580,
+    "near_miss": 562,
+    "fatality": 487,
+    "lost_time_injury": 245,
+    "equipment_damage": 144,
+    "first_aid": 80,
+    "medical_treatment": 39,
+    "restricted_work": 19,
+    "injury": 1
+  },
+  "with_potential_consequence": 687,
+  "with_hindi_text": 0,
+  "attachments_skipped_other_language": 678
+}
