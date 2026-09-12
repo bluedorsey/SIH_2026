@@ -1,0 +1,22 @@
+﻿gold_id,text,sif_potential,lsr_raw,energy_source_raw,flags
+R010,Confined space ke andar welding chal rahi thi aur gas test nahi hua tha.,YES,Confined Space,thermal_fire,multi_rule_but_single_lsr
+R015,"High pressure line damaged mili, area isolated tha aur koi personnel present nahi tha.",YES,NONE,pressure,sif_yes_no_lsr|exposure_absent_but_sif_yes
+R022,Nil,UNCERTAIN,NONE,none,very_short_text
+R023,Same as above,UNCERTAIN,NONE,none,very_short_text
+R038,Portable DG set ka exhaust room ke andar tha aur darwaza band tha.,YES,NONE,toxic_atmosphere,sif_yes_no_lsr
+R045,Acid transfer ke time worker ne goggles nahi pehne the.,YES,NONE,chemical,sif_yes_no_lsr
+R054,"Pipeline se illegal tapping ki koshish dekhi gayi, aas paas log maujud the.",YES,NONE,thermal_fire,sif_yes_no_lsr
+R055,Gas compressor shed me ventilation fan band tha aur gas detector bhi kaam nahi kar raha tha.,YES,Bypassing Safety Controls,toxic_atmosphere,multi_rule_but_single_lsr
+R096,Jetty pe kaam kar rahe worker ne life jacket nahi pehna tha.,YES,NONE,none,sif_yes_but_energy_none|sif_yes_no_lsr
+R097,"Nitrogen cylinder band store room me rakha tha, ventilation nahi thi.",YES,NONE,oxygen_deficiency,sif_yes_no_lsr
+R098,Battery room ka exhaust fan kaam nahi kar raha tha.,YES,NONE,thermal_fire,sif_yes_no_lsr
+R121,"GGS-2 me gas leak ki smell aayi, area me do log the.",YES,NONE,toxic_atmosphere,sif_yes_no_lsr
+R122,"GGS-2 ke paas hydrocarbon smell report hui, operators ne area vacate kiya.",YES,NONE,toxic_atmosphere,sif_yes_no_lsr
+R123,"Gas gathering station 2 me leakage suspect, shift in-charge ko inform kiya gaya.",YES,NONE,toxic_atmosphere,sif_yes_no_lsr
+R131,"Pump P-104 ke discharge flange se fine spray dekha gaya, operator paas tha.",YES,NONE,pressure,sif_yes_no_lsr
+R132,"P-104 ka mechanical seal fail ho gaya, hydrocarbon spill hua.",YES,NONE,pressure,sif_yes_no_lsr
+R149,"Load 15 meter se gira derrick se, area barricaded tha.",YES,Line of Fire,suspended_load,exposure_absent_but_sif_yes
+R153,"Escape ladder ka niche ka portion tuta hua tha, platform pe do log kaam kar rahe the.",YES,NONE,gravity_height,sif_yes_no_lsr
+R166,As per annexure.,UNCERTAIN,NONE,none,very_short_text
+R174,Wellhead area me koi barricading nahi thi aur bahar ke log ghoom rahe the.,YES,NONE,pressure,sif_yes_no_lsr
+R177,"Temporary electrical connection joint tape se banaya gaya tha, outdoor area.",YES,NONE,electrical,sif_yes_no_lsr

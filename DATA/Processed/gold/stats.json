@@ -1,0 +1,101 @@
+{
+  "rows": 180,
+  "sif_potential": {
+    "YES": 90,
+    "UNCERTAIN": 53,
+    "NO": 37
+  },
+  "statement_type": {
+    "observed": 169,
+    "condition_only": 4,
+    "historical": 2,
+    "hypothetical": 2,
+    "training_example": 2,
+    "corrective_completed": 1
+  },
+  "lsr": {
+    "(none)": 78,
+    "Energy Isolation": 19,
+    "Working at Height": 17,
+    "Bypassing Safety Controls": 15,
+    "Work Authorisation": 12,
+    "Confined Space": 10,
+    "Safe Mechanical Lifting": 10,
+    "Line of Fire": 8,
+    "Hot Work": 6,
+    "Driving": 5
+  },
+  "energy_types": {
+    "gravity": 35,
+    "pressure": 24,
+    "chemical": 22,
+    "electrical": 17,
+    "mechanical": 17,
+    "thermal": 16,
+    "motion": 13,
+    "biological": 3,
+    "radiation": 1
+  },
+  "barrier": {
+    "other": 57,
+    "energy_isolation": 33,
+    "None": 20,
+    "gas_test": 17,
+    "management_control": 15,
+    "exclusion_zone": 11,
+    "fall_arrest": 11,
+    "ppe": 8,
+    "ptw": 5,
+    "tool_lanyard": 2,
+    "machine_guard": 1
+  },
+  "barrier_status": {
+    "absent": 113,
+    "present_ineffective": 26,
+    "unknown": 16,
+    "present_effective": 10,
+    "pseudo": 8,
+    "None": 7
+  },
+  "language": {
+    "hinglish": 166,
+    "english": 9,
+    "mixed_assamese": 3,
+    "hindi_roman": 2
+  },
+  "script": {
+    "latin": 180
+  },
+  "trap_family": {
+    "domain_scenario": 33,
+    "none": 30,
+    "india_context": 20,
+    "vague_or_unscorable": 18,
+    "low_energy_or_numbers": 14,
+    "other": 12,
+    "capacity_or_barrier_status": 11,
+    "language_noise": 10,
+    "duplicate_cluster": 8,
+    "contradiction_ppe": 7,
+    "negation": 5,
+    "positive_observation": 3,
+    "historical": 2,
+    "hypothetical": 2,
+    "multi_rule_or_event": 2,
+    "sarcasm_minimising": 2,
+    "corrective_completed": 1
+  },
+  "rows_with_review_flags": 21,
+  "review_flag_counts": {
+    "sif_yes_no_lsr": 15,
+    "very_short_text": 3,
+    "multi_rule_but_single_lsr": 2,
+    "exposure_absent_but_sif_yes": 2,
+    "sif_yes_but_energy_none": 1
+  },
+  "words_min_median_max": [
+    1,
+    12,
+    19
+  ]
+}
