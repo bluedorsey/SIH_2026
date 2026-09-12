@@ -1,0 +1,77 @@
+{
+  "train": {
+    "rows": 4064,
+    "mean_words": 25.4,
+    "short_le12_in_scope": 284,
+    "short_le12_out": 42,
+    "pct_in_scope_among_short": 0.871,
+    "in_scope": {
+      "1": 3889,
+      "0": 175
+    },
+    "kind": {
+      "corpus_positive": 3210,
+      "short_positive": 644,
+      "easy_negative": 33,
+      "hard_negative": 142,
+      "mirror_positive": 35
+    },
+    "lang": {
+      "hinglish": 1328,
+      "assamese_mix": 357,
+      "hindi": 141,
+      "english": 1930,
+      "devanagari": 308
+    }
+  },
+  "dev": {
+    "rows": 567,
+    "mean_words": 21.8,
+    "short_le12_in_scope": 49,
+    "short_le12_out": 7,
+    "pct_in_scope_among_short": 0.875,
+    "in_scope": {
+      "1": 531,
+      "0": 36
+    },
+    "kind": {
+      "mirror_positive": 9,
+      "short_positive": 138,
+      "corpus_positive": 384,
+      "hard_negative": 29,
+      "easy_negative": 7
+    },
+    "lang": {
+      "devanagari": 41,
+      "english": 251,
+      "hinglish": 179,
+      "assamese_mix": 62,
+      "hindi": 34
+    }
+  },
+  "test": {
+    "rows": 591,
+    "mean_words": 23.8,
+    "short_le12_in_scope": 61,
+    "short_le12_out": 6,
+    "pct_in_scope_among_short": 0.91,
+    "in_scope": {
+      "1": 555,
+      "0": 36
+    },
+    "kind": {
+      "corpus_positive": 408,
+      "short_positive": 138,
+      "hard_negative": 29,
+      "mirror_positive": 9,
+      "easy_negative": 7
+    },
+    "lang": {
+      "english": 269,
+      "hinglish": 179,
+      "hindi": 37,
+      "assamese_mix": 66,
+      "devanagari": 40
+    }
+  }
+}
