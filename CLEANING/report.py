@@ -28,7 +28,7 @@ def write_report(results: dict, elapsed_s: float) -> None:
     lines: list[str] = [f"# Data quality report", "", f"Generated {now} · {elapsed_s:.0f}s · Python {platform.python_version()}", ""]
 
     iogp = results.get("iogp")
-    if iogp:
+    if iogp and not iogp.get("loaded_from_disk"):
         recs, log = iogp["records"], iogp["log"]
         lines += ["## IOGP fatal / HiPo / permanent-impairment PDFs", ""]
         lines += ["| file | type | year | pages | records | with warnings |", "|---|---|---|---|---|---|"]
@@ -60,7 +60,7 @@ def write_report(results: dict, elapsed_s: float) -> None:
         ]
 
     osha = results.get("osha")
-    if osha:
+    if osha and not osha.get("loaded_from_disk"):
         st = osha["stats"]
         lines += ["## OSHA Severe Injury Reports", ""]
         lines += [
@@ -76,7 +76,7 @@ def write_report(results: dict, elapsed_s: float) -> None:
         ]
 
     reg = results.get("register")
-    if reg:
+    if reg and not reg.get("loaded_from_disk"):
         lines += ["## Register-style logs", ""]
         for st in reg["stats"]:
             lines += [
@@ -106,6 +106,21 @@ def write_report(results: dict, elapsed_s: float) -> None:
             f"- schema problems: {len(st['schema_problems'])}",
             "",
         ]
+
+    for key, title in (("gold", "Gold-180 (Hinglish gold set)"), ("osha_abstracts", "OSHA accident abstracts (16k, GitHub mirror)"),
+                       ("ihm", "Kaggle IHM (eval only)"), ("msha", "MSHA accidents"), ("alerts", "Safety alerts (IADC / IMCA / Step Change / OISD)")):
+        res = results.get(key)
+        if not res or res.get("loaded_from_disk"):
+            continue
+        st = res["stats"]
+        lines += [f"## {title}", ""]
+        for k, v in st.items():
+            if isinstance(v, dict) and len(v) > 25:
+                v = dict(list(v.items())[:25])
+            if isinstance(v, list) and len(v) > 10:
+                v = v[:10]
+            lines.append(f"- {k}: {json.dumps(v, ensure_ascii=False) if isinstance(v, (dict, list)) else v}")
+        lines.append("")
 
     uni = results.get("unified")
     if uni:
@@ -138,11 +153,11 @@ def write_manifest(results: dict, args: dict, elapsed_s: float) -> None:
         "sources": {},
         "outputs": [],
     }
-    if results.get("iogp"):
+    if results.get("iogp") and not results["iogp"].get("loaded_from_disk"):
         manifest["sources"]["iogp"] = results["iogp"]["log"]
-    if results.get("osha"):
+    if results.get("osha") and not results["osha"].get("loaded_from_disk"):
         manifest["sources"]["osha"] = results["osha"]["stats"]
-    if results.get("register"):
+    if results.get("register") and not results["register"].get("loaded_from_disk"):
         manifest["sources"]["register"] = results["register"]["stats"]
     if results.get("terms"):
         st = dict(results["terms"]["stats"])
@@ -150,6 +165,12 @@ def write_manifest(results: dict, args: dict, elapsed_s: float) -> None:
         manifest["sources"]["terms"] = st
     if results.get("unified"):
         manifest["sources"]["unified"] = results["unified"]["stats"]
+    for key in ("gold", "osha_abstracts", "ihm", "msha", "alerts"):
+        if results.get(key) and not results[key].get("loaded_from_disk"):
+            st = dict(results[key]["stats"])
+            for big in ("by_year", "schema_problems"):
+                st.pop(big, None)
+            manifest["sources"][key] = st
     for p in sorted(PROCESSED_DIR.rglob("*")):
         if p.is_file() and p.name != OUT_MANIFEST_JSON.name:
             manifest["outputs"].append({"path": p.relative_to(PROCESSED_DIR).as_posix(), "bytes": p.stat().st_size})
