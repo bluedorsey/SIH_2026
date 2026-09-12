@@ -240,3 +240,117 @@ TERMS_SIGNAL_MAP = {
 NEAR_DUP_JACCARD_THRESHOLD = 0.85   # word-3-gram MinHash similarity above which two texts are "near duplicates"
 MINHASH_NUM_PERM = 64
 MIN_TEXT_CHARS = 15                  # texts shorter than this are dropped as unusable
+
+# ==========================================================================
+# v2 sources (added 2026-09-06) - see SIH26165_Data_Scarcity_Plan.md
+# ==========================================================================
+RAW_GOLD_DIR = RAW_DIR / "Golden_180"
+RAW_OSHA_ABSTRACTS_DIR = RAW_DIR / "OSHA Accident Abstracts"     # 16k IMIS fatality/catastrophe summaries (GitHub mirror)
+RAW_IHM_DIR = RAW_DIR / "Kaggle_IHM"                              # IHM Stefanini industrial safety DB (eval only)
+RAW_MSHA_DIR = RAW_DIR / "MSHA"                                   # Accidents.zip / Accidents.txt
+RAW_ALERTS_DIR = RAW_DIR / "Safety Alerts"                        # IADC / IMCA / StepChange / OISD sub-folders
+
+OUT_GOLD_DIR = PROCESSED_DIR / "gold"
+OUT_OSHA_ABSTRACTS_DIR = PROCESSED_DIR / "osha_abstracts"
+OUT_IHM_DIR = PROCESSED_DIR / "ihm"
+OUT_MSHA_DIR = PROCESSED_DIR / "msha"
+OUT_ALERTS_DIR = PROCESSED_DIR / "alerts"
+OUT_READINESS_MD = PROCESSED_DIR / "training_readiness.md"
+OUT_READINESS_JSON = PROCESSED_DIR / "training_readiness.json"
+
+# --------------------------------------------------------------------------
+# Oil & gas domain detection for free-text English sources (OSHA abstracts, MSHA)
+# A row is oil & gas when it contains >= 1 STRONG term. WEAK terms only raise the score.
+# --------------------------------------------------------------------------
+OILGAS_STRONG_TERMS = [
+    r"oil ?wells?", r"gas wells?", r"drilling rigs?", r"drill rigs?", r"derricks?", r"oil ?fields?",
+    r"well ?heads?", r"workover", r"well servic\w*", r"frac(?:k|turing|king|ing)?\b", r"rig floor",
+    r"drill pipe", r"drillers?\b", r"roughnecks?", r"floor ?hands?", r"pump ?jacks?", r"pumping units?",
+    r"refiner(?:y|ies)", r"crude oil", r"oil (?:and|&) gas", r"tank batter(?:y|ies)", r"blowouts?",
+    r"mud pumps?", r"well ?sites?", r"salt ?water disposal", r"tool ?pushers?", r"flowback",
+    r"natural gas (?:wells?|plants?|compressors?|pipelines?)", r"gas (?:gathering|compressor) stations?",
+    r"petroleum", r"drilling crews?", r"cementing (?:unit|crew|truck)", r"coil(?:ed)? tubing", r"wireline",
+    r"christmas tree", r"x-?mas tree", r"separator vessel", r"oil (?:tank|pipeline|lease)", r"gas (?:pipeline|lease)",
+]
+OILGAS_WEAK_TERMS = [r"pipelines?", r"casing", r"tubing", r"catwalk", r"kelly", r"swab", r"pipe rack", r"h2s", r"hydrogen sulfide"]
+
+# --------------------------------------------------------------------------
+# MSHA Accidents.txt (pipe-delimited, from Accidents.zip)
+# --------------------------------------------------------------------------
+MSHA_KEEP_COLUMNS = [
+    "MINE_ID", "SUBUNIT", "ACCIDENT_DT", "CAL_YR", "FISCAL_YR", "DEGREE_INJURY_CD", "DEGREE_INJURY",
+    "UG_LOCATION", "UG_MINING_METHOD", "MINING_EQUIP", "CLASSIFICATION_CD", "CLASSIFICATION",
+    "ACCIDENT_TYPE_CD", "ACCIDENT_TYPE", "NO_INJURIES", "ACTIVITY", "INJURY_SOURCE", "NATURE_INJURY",
+    "INJ_BODY_PART", "DAYS_LOST", "NARRATIVE", "COAL_METAL_IND",
+]
+# degree codes we keep: 00 accident only (no injury), 01 fatality, 02 permanent disability
+MSHA_DEGREE_KEEP = {"0", "00", "1", "01", "2", "02"}
+# underground-mining-only classifications to drop (no analogue at an oil & gas site)
+MSHA_DROP_CLASSIFICATION_RE = r"fall of (?:roof|rib|face|back|highwall)|ignition or explosion of gas or dust|inundation|entrapment|disorders? \(physical agents\)"
+MSHA_TRAIN_CAP_NO_INJURY = 1000
+MSHA_TRAIN_CAP_FATAL_PD = 300
+
+# --------------------------------------------------------------------------
+# Safety-alert sources (fetched by CLEANING/fetch/*)
+# --------------------------------------------------------------------------
+ALERT_SOURCES = {
+    # prefer: "attachment" = the PDF is the alert (IADC, OISD); "html" = the web page is the alert and the PDF is a
+    # multi-incident bulletin or guidance document (IMCA safety flashes, StepChange)
+    "IADC": {"dir": "IADC", "record_type": "alert", "domain": "drilling", "default_onshore_offshore": None, "prefer": "attachment"},
+    "IMCA": {"dir": "IMCA", "record_type": "alert", "domain": "marine_offshore", "default_onshore_offshore": "offshore", "prefer": "html"},
+    "StepChange": {"dir": "StepChange", "record_type": "alert", "domain": "offshore_uk", "default_onshore_offshore": "offshore", "prefer": "html"},
+    "OISD": {"dir": "OISD", "record_type": "alert", "domain": "india_oil_gas", "default_onshore_offshore": "onshore",
+             "prefer": "attachment", "extra_dirs": ["OSIDs Safety", "OISD Safety", "OISD"]},   # loose PDFs saved by hand under DATA/RAW/<name>/
+}
+# section headings found in alert bodies -> canonical field
+ALERT_SECTION_MAP = {
+    "what happened": "narrative",
+    "what happened?": "narrative",
+    "incident": "narrative",
+    "description": "narrative",
+    "description of incident": "narrative",
+    "brief description": "narrative",
+    "brief of incident": "narrative",
+    "brief of accident": "narrative",
+    "sequence of events": "narrative",
+    "brief of the incident": "narrative",
+    "incident description": "narrative",
+    "summary": "narrative",
+    "what caused it": "what_went_wrong",
+    "what caused it?": "what_went_wrong",
+    "what went wrong": "what_went_wrong",
+    "what went wrong?": "what_went_wrong",
+    "cause": "what_went_wrong",
+    "causes": "what_went_wrong",
+    "probable cause": "what_went_wrong",
+    "probable causes": "what_went_wrong",
+    "root cause": "what_went_wrong",
+    "root causes": "what_went_wrong",
+    "findings": "what_went_wrong",
+    "investigation findings": "what_went_wrong",
+    "contributing factors": "what_went_wrong",
+    "observations": "what_went_wrong",
+    "observation": "what_went_wrong",
+    "analysis": "what_went_wrong",
+    "why it happened": "what_went_wrong",
+    "unsafe acts and conditions": "what_went_wrong",
+    "immediate causes": "what_went_wrong",
+    "corrective actions": "corrective_actions",
+    "corrective action": "corrective_actions",
+    "corrective actions and recommendations": "corrective_actions",
+    "actions taken": "corrective_actions",
+    "actions": "corrective_actions",
+    "recommendations": "corrective_actions",
+    "recommendation": "corrective_actions",
+    "lessons learned": "corrective_actions",
+    "lessons learnt": "corrective_actions",
+    "learnings": "corrective_actions",
+    "key learnings": "corrective_actions",
+    "learning points": "corrective_actions",
+    "members may wish to refer to": "references",
+    "members may wish to review": "references",
+    "references": "references",
+}
+# IMCA/StepChange/IADC flashes that are marine-only and have no oil & gas site analogue
+ALERT_MAX_PDF_PAGES = 12      # safety alerts are 1-6 pages; anything longer is a guidance document - only the first pages are read
+ALERT_DROP_TOPICS_RE = r"\b(diving bell|saturation div|diver|rov\b|remotely operated vehicle|dynamic positioning|\bdp\b|mooring line|anchor handling|gangway|man overboard|lifeboat|fast rescue|gps jamming|spoofing|navigation|collision at sea|bridge watch|helicopter)\b"
