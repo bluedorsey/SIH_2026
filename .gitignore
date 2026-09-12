@@ -45,6 +45,9 @@ _textcache/
 /DATA/Processed/osha_abstracts/abstracts.csv
 /DATA/Processed/osha_abstracts/abstracts.jsonl
 /DATA/Processed/msha/msha_selected.jsonl
+/DATA/Processed/msha/msha_selected.csv
+/DATA/Processed/alerts/_textcache
+
 
 # Distillation scratch: teacher prompt/answer dumps and label-repair snapshots
 /DATA/distilled/offline/
@@ -55,3 +58,4 @@ _textcache/
 
 # Eval report output - regenerate with `python -m INFERENCE.run_all`
 /REPORTS/
+/sih_train_bundle
