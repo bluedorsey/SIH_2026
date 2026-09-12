@@ -1,0 +1,45 @@
+{
+  "rows": 425,
+  "duplicates": {
+    "exact_duplicates": 14,
+    "near_duplicates": 1,
+    "threshold": 0.85
+  },
+  "actual_level": {
+    "1": 316,
+    "2": 40,
+    "3": 31,
+    "4": 30,
+    "5": 8
+  },
+  "potential_level": {
+    "4": 143,
+    "3": 106,
+    "2": 95,
+    "1": 49,
+    "5": 31,
+    "6": 1
+  },
+  "expected_verdict_group": {
+    "SIF_POTENTIAL": 175,
+    "LOW_ENERGY": 144,
+    "BORDERLINE": 106
+  },
+  "critical_risk_top": {
+    "Others": 232,
+    "Pressed": 24,
+    "Manual Tools": 20,
+    "Chemical substances": 17,
+    "Venomous Animals": 16,
+    "Cut": 14,
+    "Projection": 13,
+    "Bees": 10,
+    "Fall": 9,
+    "Vehicles and Mobile Equipment": 8,
+    "Fall prevention (same level)": 7,
+    "Pressurized Systems": 7,
+    "remains of choco": 7,
+    "Fall prevention": 6,
+    "Suspended Loads": 6
+  }
+}
