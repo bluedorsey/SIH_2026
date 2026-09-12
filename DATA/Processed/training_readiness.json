@@ -1,0 +1,279 @@
+{
+  "generated_at": "2026-09-07T04:47:14",
+  "validity": [
+    {
+      "source": "IOGP fatal/HiPo/PI",
+      "rows": 672,
+      "empty": 0,
+      "short_lt8w": 8,
+      "duplicates": 0,
+      "label_coverage": {
+        "life_saving_rules": 573,
+        "what_went_wrong": 672,
+        "causal_factors": 591
+      },
+      "language_guess": {
+        "english": 667,
+        "hinglish": 5
+      },
+      "issues": [],
+      "status": "VALID"
+    },
+    {
+      "source": "OSHA SIR oil&gas",
+      "rows": 2902,
+      "empty": 0,
+      "short_lt8w": 6,
+      "duplicates": 1,
+      "label_coverage": {
+        "event_type": 2902,
+        "nature": 2902
+      },
+      "language_guess": {
+        "english": 2885,
+        "hinglish": 17
+      },
+      "issues": [],
+      "status": "VALID"
+    },
+    {
+      "source": "OSHA accident abstracts (16k)",
+      "rows": 16323,
+      "empty": 0,
+      "short_lt8w": 358,
+      "duplicates": 365,
+      "label_coverage": {
+        "keywords": 16323
+      },
+      "language_guess": {
+        "english": 16009,
+        "hinglish": 314
+      },
+      "issues": [],
+      "status": "VALID"
+    },
+    {
+      "source": "OSHA abstracts oil&gas subset",
+      "rows": 928,
+      "empty": 0,
+      "short_lt8w": 13,
+      "duplicates": 13,
+      "label_coverage": {
+        "keywords": 928
+      },
+      "language_guess": {
+        "english": 922,
+        "hinglish": 6
+      },
+      "issues": [],
+      "status": "VALID"
+    },
+    {
+      "source": "MSHA selected",
+      "rows": 6759,
+      "empty": 0,
+      "short_lt8w": 152,
+      "duplicates": 57,
+      "label_coverage": {
+        "classification": 6759,
+        "accident_type": 6759
+      },
+      "language_guess": {
+        "english": 6690,
+        "hinglish": 69
+      },
+      "issues": [],
+      "status": "VALID"
+    },
+    {
+      "source": "Safety alerts (IADC/IMCA/StepChange/OISD)",
+      "rows": 3157,
+      "empty": 0,
+      "short_lt8w": 0,
+      "duplicates": 52,
+      "label_coverage": {
+        "life_saving_rules": 3,
+        "what_went_wrong": 1439
+      },
+      "language_guess": {
+        "english": 3036,
+        "hinglish": 121
+      },
+      "issues": [
+        "life_saving_rules filled for only 0 %",
+        "what_went_wrong filled for only 46 %"
+      ],
+      "status": "VALID_WITH_WARNINGS"
+    },
+    {
+      "source": "Register template",
+      "rows": 56,
+      "empty": 0,
+      "short_lt8w": 19,
+      "duplicates": 0,
+      "label_coverage": {
+        "category": 56
+      },
+      "language_guess": {
+        "english": 56
+      },
+      "issues": [
+        "34 % texts under 8 words"
+      ],
+      "status": "VALID_WITH_WARNINGS"
+    },
+    {
+      "source": "Gold-180",
+      "rows": 180,
+      "empty": 0,
+      "short_lt8w": 17,
+      "duplicates": 0,
+      "label_coverage": {
+        "sif_potential": 180,
+        "statement_type": 180
+      },
+      "language_guess": {
+        "hinglish": 144,
+        "english": 33,
+        "assamese_roman": 3
+      },
+      "issues": [],
+      "status": "VALID"
+    },
+    {
+      "source": "Kaggle IHM (eval)",
+      "rows": 425,
+      "empty": 0,
+      "short_lt8w": 0,
+      "duplicates": 15,
+      "label_coverage": {
+        "potential_level": 425
+      },
+      "language_guess": {
+        "english": 422,
+        "hinglish": 3
+      },
+      "issues": [],
+      "status": "VALID"
+    }
+  ],
+  "scarcity": {
+    "seed_pool": {
+      "rows": 4045,
+      "with_lsr": 566,
+      "post_injury": 2016,
+      "post_injury_share": 0.498,
+      "onshore_tagged": 452,
+      "by_source": {
+        "msha": 1300,
+        "osha_abstracts": 915,
+        "alert_iadc": 748,
+        "iogp": 663,
+        "alert_imca": 406,
+        "alert_oisd": 13
+      },
+      "expected_rewound_rows_x4": 16180
+    },
+    "post_injury_cap_note": "post-injury originals may be at most 6 % of the final train set (= 720 rows of 12000); 2016 are available, so the surplus becomes evaluation / seeds-only.",
+    "verdict_quota_targets": {
+      "EXPOSURE": 3000,
+      "P_SIF": 2040,
+      "LOW_ENERGY": 2040,
+      "CAPACITY": 1800,
+      "SUCCESS": 840,
+      "NON_EVENT": 720,
+      "INSUFFICIENT": 720,
+      "H_SIF": 480,
+      "L_SIF": 360
+    },
+    "language_targets": {
+      "hinglish": 0.45,
+      "english": 0.35,
+      "devanagari": 0.1,
+      "assamese": 0.05
+    },
+    "gold_language_actual": {
+      "hinglish": 144,
+      "english": 33,
+      "assamese_roman": 3
+    },
+    "script_gap": "gold-180 has 0 Devanagari and 0 Assamese-script rows; training data must add them (10 % + 5 %) and gold v2 needs 30 + 20 rows"
+  },
+  "models": {
+    "gliner_span_model": {
+      "have_span_rows": 0,
+      "need": 1500,
+      "roles_covered": [],
+      "status": "NOT_READY",
+      "blocker": "0 span-annotated rows. Nothing downloadable has the 11 roles; they must come from the teacher LLM (prompts §1/§2/§3) or, as a smoke-test only, glossary weak labels (variant_lookup.json)."
+    },
+    "setfit_prefilter": {
+      "have_labelled_rows": 180,
+      "per_class": {
+        "YES": 90,
+        "NO": 37,
+        "UNCERTAIN": 53
+      },
+      "min_per_class": 16,
+      "status": "EVAL_ONLY",
+      "blocker": "Only gold-180 carries verdict labels (3-class YES/NO/UNCERTAIN, not the 9-class verdict) and it is the test set. Training rows with §0 verdicts: 0 of the 12000 target. Teacher output required."
+    },
+    "lsr_mapper": {
+      "seeds_with_lsr": 566,
+      "seed_lsr_counts": {
+        "Bypassing Safety Controls": 81,
+        "Confined Space": 7,
+        "Driving": 33,
+        "Energy Isolation": 77,
+        "Hot Work": 23,
+        "Line of Fire": 355,
+        "Safe Mechanical Lifting": 121,
+        "Work Authorisation": 65,
+        "Working at Height": 59
+      },
+      "seed_gaps_below_100": {
+        "Bypassing Safety Controls": 19,
+        "Confined Space": 93,
+        "Driving": 67,
+        "Energy Isolation": 23,
+        "Hot Work": 77,
+        "Work Authorisation": 35,
+        "Working at Height": 41
+      },
+      "expected_after_rewind_x4": {
+        "Bypassing Safety Controls": 324,
+        "Confined Space": 28,
+        "Driving": 132,
+        "Energy Isolation": 308,
+        "Hot Work": 92,
+        "Line of Fire": 1420,
+        "Safe Mechanical Lifting": 484,
+        "Work Authorisation": 260,
+        "Working at Height": 236
+      },
+      "status": "SEEDS_THIN_FOR:Bypassing Safety Controls,Confined Space,Driving,Energy Isolation,Hot Work,Work Authorisation,Working at Height"
+    },
+    "contrast_set_actual_vs_potential": {
+      "rows": 1001,
+      "status": "READY"
+    }
+  },
+  "overall": {
+    "downloaded_sources_ready": [
+      "IOGP fatal/HiPo/PI",
+      "OSHA SIR oil&gas",
+      "OSHA accident abstracts (16k)",
+      "OSHA abstracts oil&gas subset",
+      "MSHA selected",
+      "Safety alerts (IADC/IMCA/StepChange/OISD)",
+      "Register template",
+      "Gold-180",
+      "Kaggle IHM (eval)"
+    ],
+    "sources_missing": [],
+    "can_train_gliner_now": false,
+    "can_train_setfit_now": false,
+    "can_run_teacher_rewind_now": true,
+    "one_line": "Seeds and evaluation sets are valid and sufficient; NO model can be fine-tuned yet because zero rows carry span labels or 9-class verdicts - the teacher-LLM run (prompts §1/§2/§3) is the gating step, and it can start now on 4045 seeds."
+  }
+}
