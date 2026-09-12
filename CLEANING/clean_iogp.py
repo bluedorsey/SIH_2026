@@ -58,7 +58,9 @@ _CAUSAL_LINE_RE = re.compile(r"^(PEOPLE \(ACTS\)|PROCESS \(CONDITIONS\))\s*:\s*(
 _DATE_FORMATS = ("%d %b %Y", "%b %d %Y", "%d %B %Y", "%B %d %Y", "%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%d %b %y")
 
 
+# --------------------------------------------------------------------------
 # PDF text extraction
+# --------------------------------------------------------------------------
 def extract_pages(pdf_path: Path) -> list[str]:
     """Return page texts.
 
@@ -99,7 +101,9 @@ def pdf_to_lines(pages: list[str]) -> list[tuple[str, int]]:
     return out
 
 
+# --------------------------------------------------------------------------
 # Record splitting
+# --------------------------------------------------------------------------
 def split_records(lines: list[tuple[str, int]]) -> list[dict]:
     """Group lines into raw records, tracking the current region heading."""
     records: list[dict] = []
@@ -122,7 +126,9 @@ def split_records(lines: list[tuple[str, int]]) -> list[dict]:
     return records
 
 
+# --------------------------------------------------------------------------
 # Field parsing
+# --------------------------------------------------------------------------
 def parse_date(raw: str | None) -> str | None:
     if not raw:
         return None
@@ -321,7 +327,9 @@ def _warnings(r: dict) -> list[str]:
     return w
 
 
+# --------------------------------------------------------------------------
 # Driver
+# --------------------------------------------------------------------------
 def classify_pdf(path: Path) -> tuple[int | None, str | None]:
     m = _FILENAME_RE.match(path.name)
     if not m:

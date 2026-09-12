@@ -12,10 +12,13 @@ dashboard (and the training set) double-count it - see edge case 14 in
 the problem notes.
 """
 from __future__ import annotations
+
 import re
 from collections import defaultdict
 from typing import Iterable
+
 import numpy as np
+
 from .text import dedup_key
 
 _MERSENNE = (1 << 61) - 1
