@@ -12,7 +12,12 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     __package__ = "CLEANING"  # noqa: A001
 
+from .clean_alerts import split_sections  # noqa: E402
+from .clean_gold import map_barrier, trap_family, verdict_candidates  # noqa: E402
 from .clean_iogp import parse_causal_factors, parse_date, parse_record, parse_victim_block, split_records  # noqa: E402
+from .clean_msha import _sentence_case  # noqa: E402
+from .clean_osha_abstracts import oilgas_score  # noqa: E402
+from .evaluate_readiness import _lang  # noqa: E402
 from .clean_register import map_columns  # noqa: E402
 from .clean_terms import _flatten, clean_entries  # noqa: E402
 from .common.dedup import mark_duplicates  # noqa: E402
@@ -127,6 +132,79 @@ def test_terms():
     e = entries[0]
     assert e["variants"] == ["safety valve", "relief valve"]
     assert e["lsr"] == "Work Authorisation" and e["safety_signal"] == "outcome_cue"
+
+
+def test_alert_sections():
+    txt = "IMCA SF 15/26\nWhat happened?\nA crew member sustained a hand injury during a lifting operation.\nThe chain block\ntravelled off the beam.\nWhat went wrong?\n- No end stops fitted.\nLessons learned\n- Inspect all beams.\nLife Saving Rules referenced: Safe mechanical lifting, Working at height"
+    secs = split_sections(txt)
+    assert secs["narrative"].startswith("A crew member sustained") and "travelled off the beam" in secs["narrative"]
+    assert secs["what_went_wrong"].startswith("- No end stops")
+    assert secs["corrective_actions"].startswith("- Inspect")
+    inline = split_sections("WHAT HAPPENED: A dropped object fell 8 m.\nCORRECTIVE ACTIONS: Tether tools.")
+    assert inline["narrative"] == "A dropped object fell 8 m." and inline["corrective_actions"] == "Tether tools."
+
+
+def test_gold_mapping():
+    assert map_barrier("isolation and LOTO verification") == "energy_isolation"
+    assert map_barrier("gas test and entry permit") == "gas_test"
+    assert map_barrier("fall protection") == "fall_arrest"
+    assert map_barrier("goggles") == "ppe"
+    assert map_barrier("none") is None
+    assert trap_family("india_monsoon") == "india_context" and trap_family("duplicate_cluster_A") == "duplicate_cluster"
+    assert verdict_candidates("YES", "historical", ["gravity"], "absent", "present", "worker fell") == ["NON_EVENT"]
+    assert verdict_candidates("NO", "observed", [], None, "present", "small cut") == ["LOW_ENERGY", "NON_EVENT"]
+    assert verdict_candidates("YES", "observed", ["gravity"], "present_effective", "present", "scaffold pole gir gaya, lanyard caught it")[0] == "CAPACITY"
+
+
+def test_domain_and_language():
+    score, terms = oilgas_score("A floorhand on the drilling rig was struck by the tongs near the catwalk.")
+    assert score >= 4 and "drilling rig" in terms
+    assert oilgas_score("Employee fell from a billboard catwalk.")[0] == 1   # weak term only -> not oil & gas
+    assert _sentence_case("EMPLOYEE WAS STRUCK BY THE LOADER. LOTO WAS NOT APPLIED.") == "Employee was struck by the loader. LOTO was not applied."
+    assert _lang("Worker confined space me bina gas testing ke ghus gaya") == "hinglish"
+    assert _lang("The employee was struck by the falling pipe on the rig floor") == "english"
+    assert _lang("LOTO नहीं किया") == "devanagari"
+    assert _lang("Isolation kora nohol, panel ot kaam cholise.") == "assamese_roman"
+
+
+def test_alert_outcome_and_language():
+    from CLEANING.clean_alerts import (actual_fatality, choose_attachment_texts, iadc_reference, outcome_code,
+                                       potential_consequence, strip_boilerplate, text_language)
+    iadc = ("IADC Safety Alert\nALERT 06 \u2013 09\nDropped tong results in MTO\nWHAT HAPPENED:\n"
+            "The tong swung and struck him on the shoulder. This could have resulted in a fatality had it struck his head.\n"
+            "CORRECTIVE ACTIONS: To address this incident, this company issued the following to rig personnel:\nAdjust counterbalance.\n"
+            "The Corrective Actions stated in this alert are one company's attempts to address the incident, and do not necessarily "
+            "reflect the position of IADC or the IADC HSE Committee.")
+    assert actual_fatality(iadc) is False                       # hedged "could have resulted in a fatality"
+    assert actual_fatality("The worker fell 8 m and died at the scene.") is True
+    assert actual_fatality("There was no fatality.") is False
+    assert outcome_code("Dropped tong results in MTO") == "medical_treatment"
+    assert outcome_code("Fall from stairs results in LTI") == "lost_time_injury"
+    assert outcome_code("Fall from derrick results in fatality") == "fatality"
+    assert outcome_code("Near miss: could have been a fatality") == "near_miss"
+    assert iadc_reference(iadc) == ("06-09", 2006) and iadc_reference("Safety Alert No. 98-12")[1] == 1998
+    st = strip_boilerplate(iadc)
+    assert "issued the following" not in st and "IADC HSE Committee" not in st and "Adjust counterbalance" in st
+    assert potential_consequence(iadc).startswith("This could have resulted in a fatality")
+    es = "El trabajador estaba en la plataforma y fue golpeado por la tenaza. No se realiz\u00f3 el an\u00e1lisis de seguridad para la tarea."
+    hi = "\u0915\u0930\u094d\u092e\u091a\u093e\u0930\u0940 \u092c\u093f\u0928\u093e \u0939\u093e\u0930\u094d\u0928\u0947\u0938 \u0915\u0947 \u090a\u0901\u091a\u093e\u0908 \u092a\u0930 \u0915\u093e\u092e \u0915\u0930 \u0930\u0939\u093e \u0925\u093e \u0914\u0930 \u0917\u093f\u0930 \u0917\u092f\u093e\u0964 \u0915\u094b\u0908 \u091a\u094b\u091f \u0928\u0939\u0940\u0902 \u0906\u0908\u0964"
+    assert (text_language(iadc), text_language(es), text_language(hi)) == ("en", "es", "hi")
+    en_t, hi_t, info = choose_attachment_texts([("a.pdf", iadc), ("a_spanish.pdf", es), ("a_hindi.pdf", hi)])
+    assert "tong swung" in en_t and "trabajador" not in en_t and hi_t and [l["lang"] for l in info["languages"]] == ["en", "es", "hi"]
+
+
+def test_oisd_header():
+    from CLEANING.clean_alerts import oisd_header, strip_boilerplate
+    head = ("SAFETY ALERT\nOISD/SA/2026-27/E&P/02 Date: 08.04.2026\nTitle: Fatal Accident while stacking Drill Pipe\n"
+            "Location: Onshore Drilling Rig\nLoss/ Outcome: One Fatality\nINCIDENT\nAt drilling rig ...\n"
+            "Provided for information purpose only. This information should be evaluated to determine if it is applicable in your\n"
+            "operations, to avoid recurrence of such incidents.\nPage 1 of 3\nmore text")
+    h = oisd_header(head)
+    assert h["reference"] == "OISD/SA/2026-27/E&P/02" and h["date"] == "2026-04-08" and h["year"] == 2026
+    assert h["title"].startswith("Fatal Accident") and h["location"] == "Onshore Drilling Rig" and h["actual_outcome"] == "fatality"
+    assert h["segment"] == "exploration_production"
+    st = strip_boilerplate(head)
+    assert "Provided for information" not in st and "Page 1 of 3" not in st and "more text" in st
 
 
 if __name__ == "__main__":
