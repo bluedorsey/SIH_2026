@@ -1,16 +1,8 @@
-langchain
-langchain-community
-llama-cpp-python
-pandas>=2.0
-numpy>=1.24
-pdfplumber>=0.10
-pypdf>=3.0
-openpyxl>=3.1
-xlrd>=2.0
+# Training / distillation extras (the CLEANING pipeline needs only CLEANING/requirements.txt)
+# Laptop CPU:   pip install -r TRAINING/requirements-train.txt
+# Colab GPU:    the notebook installs the same list (torch already present there)
 requests>=2.31
-beautifulsoup4>=4.12
-lxml>=4.9
-requests>=2.31
+numpy>=1.24,<3
 scikit-learn>=1.3
 joblib>=1.3
 datasets>=2.18
