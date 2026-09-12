@@ -1,0 +1,13 @@
+{
+  "energy_cue": "energy source",
+  "release_cue": "energy released",
+  "no_release_cue": "not released yet",
+  "exposure_cue": "person exposed",
+  "control_present": "control present",
+  "control_absent": "control absent",
+  "control_ineffective": "control ineffective",
+  "pseudo_control": "pseudo control",
+  "negation_cue": "negation word",
+  "outcome_cue": "outcome",
+  "statement_cue": "statement marker"
+}
