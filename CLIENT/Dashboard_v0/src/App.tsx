@@ -11,6 +11,7 @@ import {
 import SifTriageDashboard from "./SifTriageDashboard";
 import SystemPage from "./SystemPage";
 import HomePage from "./HomePage";
+import AnalysePage from "./AnalysePage";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, BarChart, Bar, Cell,
@@ -20,7 +21,7 @@ import {
   notifications, type Report, type RiskLevel,
 } from "./data";
 
-type Screen = "home" | "report-detail" | "risk-dashboard" | "precursor-patterns" | "lsr" | "site-intelligence" | "reports" | "sif-triage" | "system";
+type Screen = "home" | "report-detail" | "risk-dashboard" | "precursor-patterns" | "lsr" | "site-intelligence" | "reports" | "sif-triage" | "system" | "analyse";
 
 /* ─── TOKENS ─── */
 const RISK = {
@@ -63,7 +64,8 @@ function TrendBadge({ v }: { v: "up" | "flat" | "down" | number }) {
 /* ─── SIDEBAR ─── */
 const NAV = [
   { id: "home" as Screen,              icon: <Home            className="w-4 h-4" />, label: "Home"                 },
-  { id: "sif-triage" as Screen,        icon: <Layers          className="w-4 h-4" />, label: "SIF-Precursor Triage", badge: 9  },
+  { id: "analyse" as Screen,           icon: <Zap             className="w-4 h-4" />, label: "Analyse Statement"    },
+  { id: "sif-triage" as Screen,       icon: <Layers          className="w-4 h-4" />, label: "SIF-Precursor Triage", badge: 9  },
   { id: "risk-dashboard" as Screen,    icon: <BarChart2        className="w-4 h-4" />, label: "Risk Dashboard"       },
   { id: "precursor-patterns" as Screen,icon: <Network          className="w-4 h-4" />, label: "Precursor Patterns"   },
   { id: "site-intelligence" as Screen, icon: <MapPin           className="w-4 h-4" />, label: "Sites & Activities"   },
@@ -321,6 +323,7 @@ function TopBar({ screen, reportId }: { screen: Screen; reportId?: string }) {
     "site-intelligence": "Site Intelligence",
     "reports": "Reports",
     "system": "System",
+    "analyse": "Analyse Statement",
   };
   return (
     <header className="h-11 bg-white border-b border-slate-100 flex items-center justify-between px-5 shrink-0">
@@ -1176,6 +1179,7 @@ export default function App() {
       case "site-intelligence":  return <SiteIntelligence />;
       case "reports":            return <Reports onViewReport={handleView} />;
       case "system":             return <SystemPage />;
+      case "analyse":            return <AnalysePage />;
       default:                   return <HomePage onNavigate={(s) => { setScreen(s as Screen); setSelectedReport(null); }} />;
     }
   };
