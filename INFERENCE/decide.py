@@ -8,10 +8,18 @@ from __future__ import annotations
 
 import re
 
-from .config import CONFORMAL_ALPHA, FAST_LANE_MIN_CONFIDENCE, REVIEW_MAX_CONFIDENCE, SPAN_THRESHOLD
+from .config import (CONFORMAL_ALPHA, EVIDENCE_HEAD_MIN_CONFIDENCE, FAST_LANE_MIN_CONFIDENCE,
+                     REVIEW_MAX_CONFIDENCE, REVIEW_PREFILTER_MIN_CONFIDENCE, SPAN_THRESHOLD)
 
 # a barrier that is present-but-degraded still counts as PRESENT: that is the CAPACITY branch
 _CONTROL_PRESENT_ROLES = {"control_present", "control_ineffective"}
+# A person is never a barrier. The mined lexicon learned "the worker" as control_present from
+# "the worker was protected", and GLiNER will tag "ek worker" the same way; either one turns a
+# burned worker into CAPACITY. Any control span that is just a person noun is dropped.
+_PERSON = re.compile(
+    r"^\W*(?:the |ek |a |one |do |teen |\d+ )?(?:worker|workers|employee|operator|technician|"
+    r"rigger|roustabout|helper|crew|person|people|log|aadmi|admi|banda|bande|mazdoor|labour|"
+    r"labor|staff|supervisor|engineer|contractor|driver|he|she|they)s?\W*$", re.I)
 # verdicts that mean "a precursor may be here" - the only ones worth a reviewer's time
 _SIF_LIKE = {"H_SIF", "L_SIF", "P_SIF", "EXPOSURE", "CAPACITY"}
 _SERIOUS = re.compile(
@@ -77,8 +85,11 @@ def fuse_spans(rule_spans: list[dict], gliner_spans: list[dict], threshold: floa
     for r in rule_spans:
         match = next((g for g in keep if g["role"] == r["role"]
                       and not (g["end"] <= r["start"] or g["start"] >= r["end"])), None)
-        out.append({**r, "source": "rules+gliner" if match else "rules",
-                    "score": max(1.0, match.get("score", 0)) if match else 1.0})
+        # a hand-written pattern (1.0) outranks a corpus-mined term (0.9) when both answer the
+        # same question: "burn" should be the outcome span, not the mined "breaking"
+        base = 0.9 if r.get("source") == "rules:mined" else 1.0
+        out.append({**r, "source": ("rules+gliner" if match else r.get("source", "rules")),
+                    "score": max(base, match.get("score", 0)) if match else base})
     for g in keep:
         if not any(o["role"] == g["role"] and not (o["end"] <= g["start"] or o["start"] >= g["end"])
                    for o in out):
@@ -87,7 +98,8 @@ def fuse_spans(rule_spans: list[dict], gliner_spans: list[dict], threshold: floa
     return out
 
 
-def four_questions(text: str, spans: list[dict], energy: dict, neg: dict) -> dict:
+def four_questions(text: str, spans: list[dict], energy: dict, neg: dict,
+                   semantic: dict | None = None, harm: dict | None = None) -> dict:
     """The four EEI questions, each with the span that answered it."""
     # ---- 1. high energy above the SIF threshold?
     gate = energy.get("gate")
@@ -109,20 +121,51 @@ def four_questions(text: str, spans: list[dict], energy: dict, neg: dict) -> dic
         implied = _pick(spans, "control_absent") or _pick(spans, _CONTROL_PRESENT_ROLES)
         if implied is not None:
             high = _fact(implied, True, "derived(barrier implies its energy)")
+        elif semantic:
+            # no word in any list named the energy, but the sentence MEANS one: "sulphur ki gas
+            # se ulti", "garam steam", "गैस लीक". Meaning-typed, so no span to point at.
+            high = {"value": True, "span": None, "span_start": None, "span_end": None,
+                    "source": f"semantic({semantic['hazard']}@{semantic['score']:.2f})"}
         else:
             high = _fact(None, "unknown", "none")
 
     # ---- 3. serious injury? (computed first: it tells us whether energy was released)
     out_span = _pick(spans, "outcome_cue")
     m = _SERIOUS.search(text)
+    worst = (harm or {}).get("worst")
     if m and not (_FINGER_ONLY.search(text[max(0, m.start() - 30):m.end() + 30]) and "fractur" in m.group(0).lower()):
         injury = _fact(out_span, True, "rules")
+    elif worst and (harm or {}).get("serious"):
+        # harm.py: WHAT happened to WHICH body part - "aankhon me jalan" after a gas release is
+        # a chemical injury to the eyes, and that is serious; the same to a hand is not.
+        injury = {"value": True, "span": worst["text"], "span_start": worst["start"],
+                  "span_end": worst["end"], "source": f"rules:harm({worst['why']})"}
     elif _NO_INJURY.search(text):
         injury = _fact(out_span, False, "rules")
+    elif worst:
+        injury = {"value": False, "span": worst["text"], "span_start": worst["start"],
+                  "span_end": worst["end"], "source": f"rules:harm({worst['why']}, {worst['severity']})"}
     elif out_span is not None:
         injury = _fact(out_span, False, out_span.get("source", "rules"))
     else:
         injury = _fact(None, False, "default_no_injury_stated")
+
+    # The mirror image: an event that already happened and left only a MINOR harm (a splinter,
+    # a bruise, a scratch), with no named energy source, was a low-energy event. Only when the
+    # energy answer rests on meaning alone - never over a rule span or a number.
+    worst = (harm or {}).get("worst")
+    if (high["value"] is True and worst and worst["severity"] == "minor"
+            and (high["source"].startswith("semantic") or high["source"] == "gliner+semantic")):
+        high = {"value": False, "span": worst["text"], "span_start": worst["start"],
+                "span_end": worst["end"], "source": f"derived(minor harm '{worst['why']}', no named energy)"}
+
+    # A serious injury can only have come from an energy that was there and went off. "Haath jal
+    # gaya" names no pipe, no pressure, no kV - but the burn IS the evidence. Without this the row
+    # falls to INSUFFICIENT and the one report that describes an actual injury is the one that
+    # gets no verdict.
+    if high["value"] == "unknown" and injury["value"] is True:
+        high = {"value": True, "span": injury["span"], "span_start": injury["span_start"],
+                "span_end": injury["span_end"], "source": "derived(serious injury implies high energy)"}
 
     # ---- 2. was the energy released?
     rel, no_rel = _pick(spans, "release_cue"), _pick(spans, "no_release_cue")
@@ -206,7 +249,8 @@ def rules_verdict(q: dict, statement_type: str, control_effective: bool = True) 
 
 
 def decide(text: str, spans: list[dict], energy: dict, neg: dict, statement_type: str,
-           head_pred: dict | None = None) -> dict:
+           head_pred: dict | None = None, semantic: dict | None = None,
+           harm: dict | None = None) -> dict:
     """Fuse everything into the verdict block of the response."""
     # The hazard's own noun is not a control. GLiNER tags "Pipeline", "flange", "excavated soil"
     # as control_present; those are the energy source. A control span overlapping an energy_cue
@@ -214,8 +258,9 @@ def decide(text: str, spans: list[dict], energy: dict, neg: dict, statement_type
     _e = [(s["start"], s["end"]) for s in spans if s["role"] == "energy_cue"]
     spans = [s for s in spans
              if not (s["role"] in _CONTROL_PRESENT_ROLES
-                     and any(s["start"] < b and a < s["end"] for a, b in _e))]
-    q = four_questions(text, spans, energy, neg)
+                     and (any(s["start"] < b and a < s["end"] for a, b in _e)
+                          or _PERSON.match(s["text"])))]
+    q = four_questions(text, spans, energy, neg, semantic, harm)
     ctl_span = _pick(spans, _CONTROL_PRESENT_ROLES)
     # A control_ineffective ROLE alone is not enough - the mined lexicon carries noise
     # ("anchor point" mined as ineffective). Require the text to actually say the barrier is
@@ -258,7 +303,9 @@ def decide(text: str, spans: list[dict], energy: dict, neg: dict, statement_type
             src = f.get("source") or "none"
             if src.startswith("default") or src.startswith("derived"):
                 assumed += 1
-            elif "gliner" in src:
+            elif src.startswith("rules"):
+                evidenced += 1           # verbatim rule match - "rules+gliner" is agreement, not doubt
+            elif "gliner" in src or src.startswith("semantic"):
                 model_only += 1
             else:
                 evidenced += 1
@@ -281,10 +328,17 @@ def decide(text: str, spans: list[dict], energy: dict, neg: dict, statement_type
     # AND the prefilter head all say "not a precursor", the row is closed - a human looking at a
     # LOW_ENERGY row every layer agreed on finds nothing to overturn. Any layer dissenting
     # (head says EXPOSURE, prefilter says SIF) keeps the row in the queue.
+    # ...but a coin-flip disagreement is not a dissent. The verdict head must be at least
+    # EVIDENCE_HEAD_MIN_CONFIDENCE sure of its SIF-like label, and the prefilter head at least
+    # REVIEW_PREFILTER_MIN_CONFIDENCE sure of "SIF" - a prefilter "1" at 0.52 on "small oil leak,
+    # no one exposed" was sending a NON_EVENT to a human.
     prefilter = (head_pred or {}).get("prefilter") or {}
+    head_dissents = (head_verdict in _SIF_LIKE
+                     and (head_conf or 0.0) >= EVIDENCE_HEAD_MIN_CONFIDENCE)
+    prefilter_dissents = (str(prefilter.get("label", "0")) == "1"
+                          and (prefilter.get("confidence") or 0.0) >= REVIEW_PREFILTER_MIN_CONFIDENCE)
     all_layers_say_no = (verdict not in _SIF_LIKE and verdict != "INSUFFICIENT"
-                         and (head_verdict is None or head_verdict not in _SIF_LIKE)
-                         and str(prefilter.get("label", "0")) != "1")
+                         and not head_dissents and not prefilter_dissents)
     if review and all_layers_say_no:
         review = False
         reason = None

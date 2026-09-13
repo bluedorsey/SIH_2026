@@ -141,7 +141,8 @@ def is_unscorable(text: str) -> bool:
 
 
 def evidence_check(text: str, scope: dict, rule_spans: list[dict], gliner_spans: list[dict],
-                   energy: dict, head_pred: dict, hazard_name: str | None = None) -> dict | None:
+                   energy: dict, head_pred: dict, hazard_name: str | None = None,
+                   semantic: dict | None = None) -> dict | None:
     """Second look at a row the scope gate let through. Returns None to keep the row, or a
     scope block ({'reject': True, ...}) when nothing downstream corroborates that the text is a
     safety observation.
@@ -167,6 +168,8 @@ def evidence_check(text: str, scope: dict, rule_spans: list[dict], gliner_spans:
         evidence.append(hard)
     if hazard_name:
         evidence.append(f"hazard {hazard_name}")
+    if semantic:
+        evidence.append(f"semantic {semantic['hazard']}@{semantic['score']:.2f}")
     # 2. a number with a unit answered question 1 outright
     if energy.get("gate") in ("EXCEEDS", "BELOW"):
         evidence.append(f"numeric energy gate {energy['gate']}")

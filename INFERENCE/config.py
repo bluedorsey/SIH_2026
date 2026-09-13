@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-PIPELINE_VERSION = "0.6.0"          # 0.6.0: evidence gate + vocabulary veto + review narrowing
+PIPELINE_VERSION = "0.7.0"          # 0.7.0: normalise + semantic hazard typing + harm extraction (see README "Meaning, not strings")
 
 REPO_ROOT = Path(os.getenv("SIF_REPO_ROOT", Path(__file__).resolve().parents[1]))
 MODELS_DIR = REPO_ROOT / "SERVER" / "Classfication" / "Models"
@@ -73,6 +73,25 @@ EVIDENCE_GLINER_ROLES = ("energy_cue", "release_cue", "exposure_cue", "control_p
 # enough to be worth keeping the row.
 EVIDENCE_SIF_LIKE = ("H_SIF", "L_SIF", "P_SIF", "EXPOSURE", "CAPACITY")
 EVIDENCE_HEAD_MIN_CONFIDENCE = 0.40
+# For the REVIEW decision a head has to be at least this sure of "SIF" before its disagreement
+# with a non-SIF tree verdict sends the row to a human. Same idea as above; the prefilter head is
+# binary so its floor sits higher (0.5 is a coin flip).
+REVIEW_PREFILTER_MIN_CONFIDENCE = 0.60
+
+# ---- generalisation layers (0.7.0) ------------------------------------------
+# Field text is misspelt Hinglish and the hazard vocabulary is finite. Three layers make the
+# pipeline answer the four questions from MEANING rather than exact strings, each fault-tolerant:
+# normalise.py  spelling / variant correction before every regex, with an offset map back
+# semantic.py   hazard typing by cosine similarity to prototype sentences, on the encoder the
+#               heads already hold - "methane gas", "sulphur ki gas", "garam steam" become an
+#               energy without a word list, and in Devanagari too
+# harm.py       body part + harm word -> serious_injury and an explanation span
+NORMALISE_ENABLED = True
+SEMANTIC_ENABLED = True
+SEMANTIC_MIN_SIM = 0.45             # cosine floor for the best hazard prototype
+SEMANTIC_MIN_MARGIN = 0.05          # ...and it must beat the best style-matched NEGATIVE by this much
+SEMANTIC_GLINER_ASSIST_SCORE = 0.50 # a GLiNER energy span at/above this corroborates a semantic match (0.40 tagged "Darwaze")
+HARM_ENABLED = True
 
 SPAN_THRESHOLD = 0.60               # GLiNER decision threshold. 0.35 flooded the tree with
                                     # low-confidence control_present spans that flipped EXPOSURE

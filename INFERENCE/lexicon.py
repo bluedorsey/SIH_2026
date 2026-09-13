@@ -816,19 +816,17 @@ CONTROL_ABSENT_TERMS = [
     'ptw bina',  # 16
 ]
 
-# control_present: 50 terms mined from the corpus
+# control_present: 44 terms mined from the corpus. Six were removed by hand on 2026-09-13:
+# 'the worker', 'न worker', 'worker क', 'protected the', 'verified tha', 'was verified' - the
+# miner saw "the worker was protected" and learned the PERSON as the barrier. That single entry
+# turned "pressure released ... half burn to the worker" into CAPACITY (barrier limited the harm).
 CONTROL_PRESENT_TERMS = [
     'zone',  # 1759
     'exclusion',  # 1753
     'exclusion zone',  # 1752
     'verified',  # 585
-    'verified tha',  # 548
     'zone verified',  # 495
-    'न worker',  # 408
-    'worker क',  # 408
     'protected',  # 408
-    'protected the',  # 408
-    'the worker',  # 408
     'zone protected',  # 376
     'zone न',  # 371
     'thik',  # 276
@@ -857,7 +855,6 @@ CONTROL_PRESENT_TERMS = [
     'barricade न',  # 11
     'loto thik',  # 10
     'monitoring न',  # 10
-    'was verified',  # 9
     'arrest engaged',  # 9
     'lock laga',  # 9
     'kora asil',  # 9

@@ -12,4 +12,4 @@ if sys.platform == "win32":                       # keep Devanagari/Assamese rea
         except Exception:                          # noqa: BLE001
             pass
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"

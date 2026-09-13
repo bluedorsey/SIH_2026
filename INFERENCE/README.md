@@ -17,9 +17,12 @@ Standalone. Never imports CLEANING or TRAINING; at run time it needs only the mo
 
 ## Layers
 
+    normalise.py  spelling / variant correction, offset map back to the original (always on)
     rules.py      language, statement type, span evidence, negation SCOPE   (always on)
     scope.py      is this a safety observation at all - gate + evidence gate (optional)
     models.py     GLiNER spans + SetFit heads                              (optional)
+    semantic.py   hazard typing by MEANING on the same encoder            (optional)
+    harm.py       what happened to which body part -> serious injury      (always on)
     knowledge.py  hazard -> barrier -> consequence -> cluster, mass/height defaults
     energy.py     m*g*h and the SIF thresholds (fall 1.2 m, dropped object 680 J, 50 V, 65 C)
     decide.py     fuse spans -> the FOUR questions -> EEI tree -> verdict
@@ -72,6 +75,36 @@ Knobs, all in `config.py`: `EVIDENCE_GATE_ENABLED` (kill switch), `SCOPE_SOFT_TH
 `GLINER_STRONG_SCORE`, `EVIDENCE_HEAD_MIN_CONFIDENCE`. Raising the last two dismisses more junk;
 re-run `python -m INFERENCE.evaluate` and `python -m INFERENCE.evaluate_scope --probe
 DATA/scope/probe.jsonl` before trusting any change, and treat "0 gold YES rejected" as the bar.
+
+## Meaning, not strings (0.7.0)
+
+Field reports are misspelt Hinglish, and every word list is finite. Three layers make the four
+questions answerable from MEANING, each fault-tolerant and each explainable in the response:
+
+`normalise.py` runs before every regex: a table of known variants (gya -> gaya, pipline ->
+pipeline, jl -> jal) plus edit-distance correction of 7+ letter tokens against a CURATED list of
+core safety nouns. Every offset is mapped back, so the highlight lands on what the reporter
+typed. It is deliberately narrow: an earlier version corrected valid words onto regex fragments
+("pichhe" -> "pichle" made a forklift near-miss "historical") and cost two gold precursors.
+
+`semantic.py` types the hazard by cosine similarity to prototype sentences, on the encoder the
+heads already hold - "sulphur ki gas", "garam steam", "गैस लीक" become an energy with no word
+list, in Devanagari too. Two guards, both measured: the score is the MARGIN over style-matched
+negative prototypes (raw similarity is dominated by "sounds like a Hinglish workplace sentence"),
+and the semantic answer counts for question 1 only when GLiNER independently finds an energy
+span in the text (similarity says what a sentence is ABOUT, not how much energy was there - a
+stair slip scored 0.82 against excavation). Uncorroborated, it is reported and nothing more.
+
+`harm.py` answers question 3 from a small table: harm class x body part x minimiser. A chemical
+irritation to the EYES or airway is serious; the same to a hand is not; "toot gaya" is a fracture
+only next to a body part; "halka", "first aid", "eyewash use kiya" drop a level; irritation with
+no chemical energy named is minor (dust in the eye). A serious harm implies the energy was there
+and went off; a minor harm with no named energy implies it was not high.
+
+Measured with the full stack (gold-180 + probe), 0.6.1 -> 0.7.0: recall on YES 0.989 -> 0.989,
+accuracy 0.661 -> 0.650, review 69 -> 68, junk to review 11 -> 11, regression 8/8. What that
+buys: misspelt and Devanagari reports, novel hazard words, body-part-aware injury, and the
+unauthorised-entry report that was silently dropped now reaches review.
 
 ## Why the verdict is trustworthy
 

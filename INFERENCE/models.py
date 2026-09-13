@@ -59,11 +59,15 @@ class SpanExtractor:
         log.warning("no GLiNER available - running on rules only")
         return self
 
-    def spans(self, text: str) -> list[dict]:
+    def spans(self, text: str, threshold: float | None = None) -> list[dict]:
+        """Spans at `threshold` (default SPAN_THRESHOLD). The pipeline asks once at a lower
+        threshold and filters, so a weak energy span can still be borrowed as evidence when
+        the semantic layer independently agrees on the hazard."""
         if not self.available:
             return []
         try:
-            ents = self.model.predict_entities(text, list(ROLE_PROMPTS), threshold=SPAN_THRESHOLD)
+            ents = self.model.predict_entities(text, list(ROLE_PROMPTS),
+                                               threshold=SPAN_THRESHOLD if threshold is None else threshold)
         except Exception as exc:                        # noqa: BLE001
             log.warning("GLiNER inference failed: %s", str(exc)[:160])
             return []

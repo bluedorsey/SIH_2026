@@ -136,7 +136,9 @@ _HAZARD_VOCAB = (
     r"madhumakkhi|scorpion|bichhu|dog bite|kutta"
 )
 _BARRIER_VOCAB = (
-    r"harness|lanyard|lifeline|fall arrest|barricad\w*|exclusion zone|permit|PTW|LOTO|"
+    r"harness|lanyard|lifeline|fall arrest|barricad\w*|exclusion zone|permi(?:t|ts|tted|ssion)|PTW|"
+    r"unauthori[sz]ed|restricted area|prohibited area|no[- ]entry|non[- ]?permitted|"
+    r"authori[sz]ation|trespass\w*|LOTO|"
     r"lock ?out|tag ?out|isolat\w+|gas ?test\w*|SCBA|BA set|guard(?:ing|s|ed)?|banksman|"
     r"spotter|flagman|shoring|earthing|interlock|scaffold\w*|railing|handrail|guardrail|"
     r"toe ?board|helmet|hard ?hat|safety shoes|goggles|face ?shield|gloves|dastane|apron|"

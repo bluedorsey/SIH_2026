@@ -26,7 +26,10 @@ def detect_language(text: str) -> str:
         return "hindi"
     if len(_ASSAMESE.findall(text)) >= 2:
         return "assamese_mix"
-    if len(_HINGLISH.findall(text)) >= 2:
+    hits = [h.lower() for h in _HINGLISH.findall(text)]
+    # "the" is Hinglish (plural of "tha") AND the commonest English word; on its own it says
+    # nothing. It counts only alongside a word that is unambiguously Hinglish.
+    if any(h != "the" for h in hits) and len(hits) >= 2:
         return "hinglish"
     return "english"
 
@@ -87,8 +90,8 @@ PATTERNS: dict[str, str] = {
                       r"|\bwithout\s+(?:\w+\s+){0,2}(?:harness|permit|PTW|LOTO|barricad\w+|guard|SCBA|"
                       r"gas ?test\w*|isolation|lifeline|lanyard|approval|authoris\w+|authoriz\w+)"
                       r"|\bbina\s+(?:\w+\s+){0,2}(?:kiye|kiya|ke)?"
-                      r"|\b(?:harness|barricading|barricade|permit|PTW|LOTO|gas ?test\w*|guard|SCBA|"
-                      r"shoring|isolation|lifeline|lanyard|training|test)\s+(?:nahi|nai|nahin)\b"
+                      r"|\b(?:harness|barricading|barricade|permi(?:t|ssion)|PTW|LOTO|gas ?test\w*|guard|SCBA|"
+                      r"shoring|isolation|lifeline|lanyard|training|test|authori[sz]ation|clearance)\s+(?:nahi|nai|nahin)\b"
                       r"|\bnahi\s+(?:tha|thi|kiya|liya|hua)\b"
                       r"|\bnot\s+(?:isolated|barricaded|guarded|tested|tagged|anchored|clipped|"
                       r"authorised|authorized|permitted|supervised)\b)",
