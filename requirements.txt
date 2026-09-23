@@ -23,3 +23,14 @@ accelerate>=0.30
 gliner>=0.2.13
 sentencepiece>=0.2
 protobuf>=4.25
+
+# ── Backend (API / DB / Analytics) ──
+fastapi
+uvicorn[standard]
+sqlalchemy>=2.0
+alembic
+psycopg[binary]
+duckdb
+pydantic-settings
+python-multipart
+mlxtend
