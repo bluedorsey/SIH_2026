@@ -10,6 +10,7 @@ import argparse
 import json
 import logging
 import sys
+import time
 from pathlib import Path
 
 from .pipeline import analyse
@@ -35,8 +36,11 @@ def main(argv: list[str] | None = None) -> int:
     else:
         ap.error("give a text or --file")
 
+    started = time.perf_counter()
     results = [analyse(t, report_id=a.report_id if len(texts) == 1 else None,
                        use_models=not a.no_models) for t in texts]
+    elapsed = time.perf_counter() - started
+    rows_per_second = len(results) / elapsed if elapsed else 0.0
 
     if a.out:
         with open(a.out, "w", encoding="utf-8") as fh:
@@ -46,6 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         for r in results:
             print(json.dumps(r, ensure_ascii=False, indent=None if a.compact else 2))
+    print(f"execution time: {elapsed:.3f}s | rows/sec: {rows_per_second:.2f}", file=sys.stderr)
     return 0
 
 

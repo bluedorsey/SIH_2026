@@ -197,8 +197,13 @@ def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(levelname)-7s %(message)s")
 
     mode = "rules only" if a.no_models else "rules + GLiNER + heads"
+    started = time.perf_counter()
     res = run(use_models=not a.no_models)
+    elapsed = time.perf_counter() - started
+    rows_per_second = len(res) / elapsed if elapsed else 0.0
     m = metrics(res)
+    m["execution_time_seconds"] = round(elapsed, 3)
+    m["rows_per_second"] = round(rows_per_second, 2)
 
     out = Path(a.out_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -208,7 +213,8 @@ def main(argv: list[str] | None = None) -> int:
     (out / f"gold180_{tag}.json").write_text(json.dumps(m, indent=2), encoding="utf-8")
     (out / f"gold180_{tag}.html").write_text(html_report(m, res, mode), encoding="utf-8")
 
-    print(json.dumps({k: m[k] for k in ("n", "accuracy", "sif", "review_rate", "mean_spans")}, indent=2))
+    print(json.dumps({k: m[k] for k in ("n", "accuracy", "sif", "review_rate", "mean_spans",
+                                        "execution_time_seconds", "rows_per_second")}, indent=2))
     print(f"\nreport -> {out / f'gold180_{tag}.html'}   (open it in a browser)")
     return 0
 

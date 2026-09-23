@@ -1,0 +1,227 @@
+{
+  "report_id": "SIF-180690c475e3",
+  "input": {
+    "text": "Crane lifting 2 ton pipe over workers, no banksman present, load swung near helper",
+    "chars": 82
+  },
+  "meta": {
+    "site": null,
+    "date": null,
+    "activity": null,
+    "department": null,
+    "language_detected": "english",
+    "statement_type": "condition_only"
+  },
+  "verdict": {
+    "label": "P_SIF",
+    "confidence": 0.79,
+    "conformal_set": [
+      "P_SIF"
+    ],
+    "route": "fast_lane",
+    "layers_agreed": [
+      "rules"
+    ],
+    "llm_invoked": false,
+    "decision_path": "high_energy=True AND energy_released=True AND serious_injury=False AND control_present=False -> P_SIF (no barrier, nobody hurt this time)",
+    "head_verdict": null,
+    "head_confidence": null
+  },
+  "eei_facts": {
+    "high_energy_present": {
+      "value": true,
+      "span": "2 ton",
+      "span_start": 14,
+      "span_end": 19,
+      "source": "rules"
+    },
+    "energy_released": {
+      "value": true,
+      "span": "swung",
+      "span_start": 65,
+      "span_end": 70,
+      "source": "rules:mined"
+    },
+    "serious_injury": {
+      "value": false,
+      "span": null,
+      "span_start": null,
+      "span_end": null,
+      "source": "default_no_injury_stated"
+    },
+    "direct_control_present": {
+      "value": false,
+      "span": "no banksman",
+      "span_start": 39,
+      "span_end": 50,
+      "source": "rules"
+    }
+  },
+  "energy": {
+    "type": "motion",
+    "estimate_j": null,
+    "range_j": null,
+    "basis": null,
+    "formula": null,
+    "inputs": {},
+    "threshold_j": null,
+    "gate": "UNKNOWN"
+  },
+  "safety_knowledge": {
+    "hazard": "vehicle_or_mobile_plant",
+    "barrier": "traffic_management",
+    "barrier_failure_mode": "not_established",
+    "lsr": [
+      "driving",
+      "line_of_fire"
+    ],
+    "potential_consequence": "struck_by_vehicle",
+    "precursor_cluster": "MOBILE_PLANT_NO_SEGREGATION"
+  },
+  "spans": [
+    {
+      "role": "energy_cue",
+      "text": "Crane",
+      "start": 0,
+      "end": 5,
+      "source": "rules:mined",
+      "score": 0.9
+    },
+    {
+      "role": "control_absent",
+      "text": "lifting",
+      "start": 6,
+      "end": 13,
+      "source": "rules:mined",
+      "score": 0.9
+    },
+    {
+      "role": "energy_cue",
+      "text": "2 ton",
+      "start": 14,
+      "end": 19,
+      "source": "rules",
+      "score": 1.0
+    },
+    {
+      "role": "energy_cue",
+      "text": "pipe",
+      "start": 20,
+      "end": 24,
+      "source": "rules:hazard_lexicon",
+      "score": 1.0
+    },
+    {
+      "role": "exposure_cue",
+      "text": "workers",
+      "start": 30,
+      "end": 37,
+      "source": "rules:mined",
+      "score": 0.9
+    },
+    {
+      "role": "negation_cue",
+      "text": "no",
+      "start": 39,
+      "end": 41,
+      "source": "rules",
+      "score": 1.0
+    },
+    {
+      "role": "control_absent",
+      "text": "no banksman",
+      "start": 39,
+      "end": 50,
+      "source": "rules",
+      "score": 1.0
+    },
+    {
+      "role": "control_absent",
+      "text": "present",
+      "start": 51,
+      "end": 58,
+      "source": "rules:mined",
+      "score": 0.9
+    },
+    {
+      "role": "energy_cue",
+      "text": "load",
+      "start": 60,
+      "end": 64,
+      "source": "rules:mined",
+      "score": 0.9
+    },
+    {
+      "role": "release_cue",
+      "text": "swung",
+      "start": 65,
+      "end": 70,
+      "source": "rules:mined",
+      "score": 0.9
+    },
+    {
+      "role": "exposure_cue",
+      "text": "helper",
+      "start": 76,
+      "end": 82,
+      "source": "rules:mined",
+      "score": 0.9
+    }
+  ],
+  "traps_checked": {
+    "negation_detected": true,
+    "negation_scope": "control",
+    "note": "negation applies to a control (a barrier is missing) - this raises severity, it does not lower it"
+  },
+  "uc_ua": {
+    "labels": [
+      "UC"
+    ],
+    "unsafe_act": false,
+    "unsafe_condition": true,
+    "confidence": 0.61,
+    "act_cues": [],
+    "condition_cues": [
+      {
+        "cue": "control_absent_span",
+        "text": "lifting",
+        "start": 6,
+        "end": 13
+      }
+    ],
+    "actor": "helper",
+    "passive_victim": false,
+    "basis": "rules"
+  },
+  "harm": {
+    "harms": [],
+    "serious": false,
+    "worst": null
+  },
+  "semantic": null,
+  "scope": {
+    "reject": false,
+    "p_out_of_scope": null,
+    "veto": null,
+    "reason": "scope gate unavailable"
+  },
+  "review": {
+    "required": false,
+    "reason": null,
+    "human_reviewed": false,
+    "reviewer_verdict": null
+  },
+  "provenance": {
+    "pipeline_version": "0.7.0",
+    "package_version": "0.7.0",
+    "models": {
+      "gliner": null,
+      "heads": null,
+      "semantic": null,
+      "llm": null
+    },
+    "head_predictions": {},
+    "normalisation": [],
+    "processed_at": "2026-09-22T23:46:54+05:30"
+  }
+}
