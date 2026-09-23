@@ -1,0 +1,48 @@
+Traceback (most recent call last):
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "E:\SIH_26\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+psycopg.errors.InvalidTextRepresentation: invalid input syntax for type uuid: "SIF-e3b518a3a150"
+CONTEXT:  unnamed portal parameter $1 = '...'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\SIH_26\SERVER\API\routers\compat.py", line 51, in _persist_result
+    session.execute(sa.insert(reports).values(
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2280, in _execute_internal
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1421, in execute
+    return meth(
+           ^^^^^
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+  File "E:\SIH_26\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+  File "E:\SIH_26\.venv\Lib\site-packages\psycopg\cursor.py", line 117, in execute
+    raise ex.with_traceback(None)
+sqlalchemy.exc.DataError: (psycopg.errors.InvalidTextRepresentation) invalid input syntax for type uuid: "SIF-e3b518a3a150"
+CONTEXT:  unnamed portal parameter $1 = '...'
+[SQL: INSERT INTO raw.reports (report_id, source, site_code, raw_text, raw_text_hash, ingested_at, metadata) VALUES (%(report_id)s::UUID, %(source)s::VARCHAR, %(site_code)s::VARCHAR, %(raw_text)s::VARCHAR, %(raw_text_hash)s::VARCHAR, %(ingested_at)s::TIMESTAMP WITH TIME ZONE, %(metadata)s::JSONB)]
+[parameters: {'report_id': 'SIF-e3b518a3a150', 'source': 'frontend', 'site_code': None, 'raw_text': 'Crane lifting 2 ton pipe over workers, sling was frayed', 'raw_text_hash': 'f8bf59f7880169e5a82b0c54a47079ab8686c5fbd5a6a934f9a2bb2fa4adf9b5', 'ingested_at': datetime.datetime(2026, 9, 23, 12, 5, 17, 170328, tzinfo=datetime.timezone.utc), 'metadata': Jsonb(None)}]
+(Background on this error at: https://sqlalche.me/e/20/9h9h)
