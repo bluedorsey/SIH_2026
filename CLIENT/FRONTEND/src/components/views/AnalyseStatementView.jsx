@@ -20,7 +20,7 @@ import {
   HelpCircle,
   Activity,
   Layers,
-  MapPin
+  MapPin,
 } from "lucide-react";
 
 import { analyseReport, analyseBatch } from "../../services/api";
@@ -29,7 +29,7 @@ export default function AnalyseStatementView() {
   const [analysisMode, setAnalysisMode] = useState("file");
 
   const [statement, setStatement] = useState("");
-  const [site, setSite] = useState("");
+  const [site, setSite] = useState("All Sites");
   const [location, setLocation] = useState("");
   const [activity, setActivity] = useState("");
 
@@ -41,6 +41,16 @@ export default function AnalyseStatementView() {
   const [result, setResult] = useState(null);
   const [batchResults, setBatchResults] = useState(null);
   const [apiError, setApiError] = useState("");
+
+  const siteOptions = [
+    "Duliajan",
+    "Digboi",
+    "Naharkatiya",
+    "Moran",
+    "Baghjan",
+    "Rajasthan (Jodhpur)",
+    "KG Basin",
+  ];
 
   const examplePrompts = [
     {
@@ -72,15 +82,11 @@ export default function AnalyseStatementView() {
   // CSV PARSER
 
   const parseCSV = (csvText) => {
-    const lines = csvText
-      .split(/\r\n|\n/)
-      .filter((line) => line.trim() !== "");
+    const lines = csvText.split(/\r\n|\n/).filter((line) => line.trim() !== "");
 
     if (lines.length < 2) return [];
 
-    const headers = lines[0]
-      .split(",")
-      .map((h) => h.trim().toLowerCase());
+    const headers = lines[0].split(",").map((h) => h.trim().toLowerCase());
 
     const statementIndex = headers.findIndex(
       (h) =>
@@ -88,38 +94,30 @@ export default function AnalyseStatementView() {
         h.includes("report") ||
         h.includes("observation") ||
         h.includes("description") ||
-        h.includes("text")
+        h.includes("text"),
     );
 
     const siteIndex = headers.findIndex(
-      (h) =>
-        h.includes("site") ||
-        h.includes("location") ||
-        h.includes("yard")
+      (h) => h.includes("site") || h.includes("location") || h.includes("yard"),
     );
 
     const activityIndex = headers.findIndex(
       (h) =>
-        h.includes("activity") ||
-        h.includes("operation") ||
-        h.includes("work")
+        h.includes("activity") || h.includes("operation") || h.includes("work"),
     );
 
     const parsed = [];
 
     for (let i = 1; i < lines.length; i++) {
       const values =
-        lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) ||
-        lines[i].split(",");
+        lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(",");
 
       const cleanValues = values.map((value) =>
-        value.replace(/^"|"$/g, "").trim()
+        value.replace(/^"|"$/g, "").trim(),
       );
 
       const statementValue =
-        statementIndex !== -1
-          ? cleanValues[statementIndex]
-          : cleanValues[0];
+        statementIndex !== -1 ? cleanValues[statementIndex] : cleanValues[0];
 
       const siteValue =
         siteIndex !== -1 ? cleanValues[siteIndex] : cleanValues[1] || "";
@@ -140,8 +138,6 @@ export default function AnalyseStatementView() {
 
     return parsed;
   };
-
-  // FILE UPLOAD
 
   const handleFileUpload = (event) => {
     const file = event.target.files?.[0];
@@ -179,14 +175,14 @@ export default function AnalyseStatementView() {
 
           if (formatted.length === 0) {
             setFileError(
-              'Invalid JSON format. Expected an array containing objects with a "statement" or "text" field.'
+              'Invalid JSON format. Expected an array containing objects with a "statement" or "text" field.',
             );
           } else {
             setParsedData(formatted);
           }
         } catch {
           setFileError(
-            "Failed to parse JSON file. Please check the file syntax."
+            "Failed to parse JSON file. Please check the file syntax.",
           );
         }
       };
@@ -210,7 +206,7 @@ export default function AnalyseStatementView() {
       reader.readAsText(file);
     } else {
       setFileError(
-        "Unsupported file format. Please upload a .csv or .json file."
+        "Unsupported file format. Please upload a .csv or .json file.",
       );
       setUploadedFile(null);
     }
@@ -222,7 +218,9 @@ export default function AnalyseStatementView() {
     if (!statement.trim() || loading) return;
 
     if (!site.trim() || !location.trim()) {
-      setApiError("Site and Location are compulsory fields. Please provide both to continue.");
+      setApiError(
+        "Site and Location are compulsory fields. Please provide both to continue.",
+      );
       return;
     }
 
@@ -242,8 +240,7 @@ export default function AnalyseStatementView() {
       console.error("OILENS analysis error:", error);
 
       setApiError(
-        error?.message ||
-          "Unable to connect to the OILENS analysis engine."
+        error?.message || "Unable to connect to the OILENS analysis engine.",
       );
     } finally {
       setLoading(false);
@@ -275,10 +272,7 @@ export default function AnalyseStatementView() {
     } catch (error) {
       console.error("OILENS batch analysis error:", error);
 
-      setApiError(
-        error?.message ||
-          "Unable to process the uploaded dataset."
-      );
+      setApiError(error?.message || "Unable to process the uploaded dataset.");
     } finally {
       setLoading(false);
     }
@@ -308,10 +302,7 @@ export default function AnalyseStatementView() {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key === "Enter"
-      ) {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
         event.preventDefault();
         handleAnalyse();
       }
@@ -322,15 +313,7 @@ export default function AnalyseStatementView() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [
-    statement,
-    site,
-    location,
-    activity,
-    parsedData,
-    analysisMode,
-    loading,
-  ]);
+  }, [statement, site, location, activity, parsedData, analysisMode, loading]);
 
   const isButtonDisabled =
     loading ||
@@ -352,15 +335,15 @@ export default function AnalyseStatementView() {
             Analyse Safety Report
           </h1>
           <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-            Submit an unsafe-act, unsafe-condition, or near-miss
-            report. OILENS extracts the relevant safety context and
-            evaluates SIF potential using the analysis engine.
+            Submit an unsafe-act, unsafe-condition, or near-miss report. OILENS
+            extracts the relevant safety context and evaluates SIF potential
+            using the analysis engine.
           </p>
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <Info size={14} />
             <span>
-              AI assessment is decision support. Final review remains
-              with the Safety Officer.
+              AI assessment is decision support. Final review remains with the
+              Safety Officer.
             </span>
           </div>
         </div>
@@ -427,25 +410,43 @@ export default function AnalyseStatementView() {
                     Click to upload or drag & drop
                   </p>
                   <p className="text-xs text-gray-500">
-                    Supports <span className="font-semibold text-gray-700">.CSV</span> or <span className="font-semibold text-gray-700">.JSON</span>
+                    Supports{" "}
+                    <span className="font-semibold text-gray-700">.CSV</span> or{" "}
+                    <span className="font-semibold text-gray-700">.JSON</span>
                   </p>
                 </div>
-                <input type="file" accept=".csv,.json" className="hidden" onChange={handleFileUpload} />
+                <input
+                  type="file"
+                  accept=".csv,.json"
+                  className="hidden"
+                  onChange={handleFileUpload}
+                />
               </label>
             ) : (
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-teal-50/50 border border-teal-200 rounded-xl gap-3">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-teal-600 text-white rounded-lg">
-                    {uploadedFile.name.toLowerCase().endsWith(".csv") ? <FileSpreadsheet size={20} /> : <FileCode size={20} />}
+                    {uploadedFile.name.toLowerCase().endsWith(".csv") ? (
+                      <FileSpreadsheet size={20} />
+                    ) : (
+                      <FileCode size={20} />
+                    )}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-gray-900">{uploadedFile.name}</h4>
+                    <h4 className="text-sm font-bold text-gray-900">
+                      {uploadedFile.name}
+                    </h4>
                     <p className="text-xs text-gray-500">
-                      {(uploadedFile.size / 1024).toFixed(1)} KB • {parsedData.length} records detected
+                      {(uploadedFile.size / 1024).toFixed(1)} KB •{" "}
+                      {parsedData.length} records detected
                     </p>
                   </div>
                 </div>
-                <button type="button" onClick={removeFile} className="flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg border border-rose-200">
+                <button
+                  type="button"
+                  onClick={removeFile}
+                  className="flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-lg border border-rose-200"
+                >
                   <X size={14} /> Remove File
                 </button>
               </div>
@@ -457,7 +458,7 @@ export default function AnalyseStatementView() {
                 <span>{fileError}</span>
               </div>
             )}
-            
+
             {apiError && (
               <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
                 <AlertCircle size={15} className="shrink-0 mt-0.5" />
@@ -489,10 +490,18 @@ export default function AnalyseStatementView() {
                     <tbody className="divide-y divide-gray-100 bg-white">
                       {parsedData.slice(0, 5).map((row, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                          <td className="p-2.5 font-bold text-gray-400">{index + 1}</td>
-                          <td className="p-2.5 text-gray-800 font-medium truncate max-w-xs">{row.text}</td>
-                          <td className="p-2.5 text-gray-600">{row.site || "—"}</td>
-                          <td className="p-2.5 text-gray-600">{row.activity || "—"}</td>
+                          <td className="p-2.5 font-bold text-gray-400">
+                            {index + 1}
+                          </td>
+                          <td className="p-2.5 text-gray-800 font-medium truncate max-w-xs">
+                            {row.text}
+                          </td>
+                          <td className="p-2.5 text-gray-600">
+                            {row.site || "—"}
+                          </td>
+                          <td className="p-2.5 text-gray-600">
+                            {row.activity || "—"}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -523,16 +532,24 @@ export default function AnalyseStatementView() {
               className="w-full resize-none rounded-xl border border-gray-200 p-3.5 text-sm text-gray-800 placeholder-gray-400 focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600"
             />
             <div className="flex flex-wrap items-center gap-2.5">
-              <input
-                type="text"
-                placeholder="Site name (Required)*"
+              <select
                 value={site}
                 onChange={(e) => {
                   setSite(e.target.value);
                   if (apiError.includes("compulsory fields")) setApiError("");
                 }}
-                className={`rounded-lg border px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-44 ${(!site.trim() && apiError.includes("compulsory fields")) ? 'border-red-400 ring-1 ring-red-400' : 'border-gray-200'}`}
-              />
+                className={`rounded-lg border px-3 py-1.5 text-xs text-gray-700 focus:border-teal-600 focus:outline-none sm:w-44 ${
+                  !site.trim() && apiError.includes("compulsory fields")
+                    ? "border-red-400 ring-1 ring-red-400"
+                    : "border-gray-200"
+                }`}
+              >
+                {siteOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
                 placeholder="Location (Required)*"
@@ -541,7 +558,7 @@ export default function AnalyseStatementView() {
                   setLocation(e.target.value);
                   if (apiError.includes("compulsory fields")) setApiError("");
                 }}
-                className={`rounded-lg border px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-64 ${(!location.trim() && apiError.includes("compulsory fields")) ? 'border-red-400 ring-1 ring-red-400' : 'border-gray-200'}`}
+                className={`rounded-lg border px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-64 ${!location.trim() && apiError.includes("compulsory fields") ? "border-red-400 ring-1 ring-red-400" : "border-gray-200"}`}
               />
               <input
                 type="text"
@@ -598,12 +615,20 @@ export default function AnalyseStatementView() {
             {loading ? (
               <>
                 <Loader2 size={14} className="animate-spin" />
-                <span>{analysisMode === "file" ? "Analysing Dataset..." : "Analysing Report..."}</span>
+                <span>
+                  {analysisMode === "file"
+                    ? "Analysing Dataset..."
+                    : "Analysing Report..."}
+                </span>
               </>
             ) : (
               <>
                 <Zap size={14} />
-                <span>{analysisMode === "file" ? `Analyse ${parsedData.length} Records` : "Analyse Report"}</span>
+                <span>
+                  {analysisMode === "file"
+                    ? `Analyse ${parsedData.length} Records`
+                    : "Analyse Report"}
+                </span>
                 <kbd className="ml-1 rounded bg-white/20 px-1 py-0.5 text-[10px] font-normal tracking-wide text-white">
                   Ctrl+↵
                 </kbd>
@@ -632,15 +657,17 @@ export default function AnalyseStatementView() {
 
 function SingleStatementResult({ result }) {
   const verdict = String(result?.verdict || "").toUpperCase();
-  
+
   // Determine banner colors — bold filled backgrounds to match reference
   let bannerClass = "bg-slate-600 text-white";
   let verdictIcon = <HelpCircle size={24} className="text-white" />;
-  
+
   if (["CAPACITY"].includes(verdict)) {
     bannerClass = "bg-gradient-to-r from-amber-600 to-orange-600 text-white";
     verdictIcon = <AlertTriangle size={24} className="text-white" />;
-  } else if (["H_SIF", "P_SIF", "L_SIF", "SIF", "HIGH SIF POTENTIAL"].includes(verdict)) {
+  } else if (
+    ["H_SIF", "P_SIF", "L_SIF", "SIF", "HIGH SIF POTENTIAL"].includes(verdict)
+  ) {
     bannerClass = "bg-gradient-to-r from-red-700 to-red-600 text-white";
     verdictIcon = <ShieldAlert size={24} className="text-white" />;
   } else if (["EXPOSURE"].includes(verdict)) {
@@ -657,16 +684,20 @@ function SingleStatementResult({ result }) {
     verdictIcon = <HelpCircle size={24} className="text-white" />;
   }
 
-  const confidence = result?.verdict_detail?.confidence ? (result.verdict_detail.confidence * 100).toFixed(0) + "%" : "N/A";
-  const processedTime = result?.provenance?.processed_at ? new Date(result.provenance.processed_at).toLocaleString() : "Unknown";
+  const confidence = result?.verdict_detail?.confidence
+    ? (result.verdict_detail.confidence * 100).toFixed(0) + "%"
+    : "N/A";
+  const processedTime = result?.provenance?.processed_at
+    ? new Date(result.provenance.processed_at).toLocaleString()
+    : "Unknown";
 
   const renderHighlightedText = () => {
     const text = result?.input?.text || "";
     const spans = result?.spans || [];
-    
+
     // Sort spans by start index
     const sortedSpans = [...spans].sort((a, b) => a.start - b.start);
-    
+
     if (sortedSpans.length === 0) return <span>{text}</span>;
 
     const elements = [];
@@ -674,23 +705,38 @@ function SingleStatementResult({ result }) {
 
     sortedSpans.forEach((span, idx) => {
       if (span.start > lastIndex) {
-        elements.push(<span key={`text-${idx}`}>{text.substring(lastIndex, span.start)}</span>);
+        elements.push(
+          <span key={`text-${idx}`}>
+            {text.substring(lastIndex, span.start)}
+          </span>,
+        );
       }
-      
+
       let bgClass = "bg-gray-200";
       if (span.role === "energy_cue") bgClass = "bg-orange-200 text-orange-900";
-      else if (span.role === "release_cue") bgClass = "bg-pink-200 text-pink-900";
-      else if (span.role === "exposure_cue") bgClass = "bg-purple-200 text-purple-900";
-      else if (span.role === "control_present") bgClass = "bg-green-200 text-green-900";
-      else if (span.role === "control_absent") bgClass = "bg-red-200 text-red-900";
-      else if (span.role === "control_ineffective") bgClass = "bg-yellow-200 text-yellow-900";
-      else if (span.role === "outcome_cue") bgClass = "bg-gray-300 text-gray-900";
-      else if (span.role === "negation_cue") bgClass = "bg-slate-300 text-slate-900";
+      else if (span.role === "release_cue")
+        bgClass = "bg-pink-200 text-pink-900";
+      else if (span.role === "exposure_cue")
+        bgClass = "bg-purple-200 text-purple-900";
+      else if (span.role === "control_present")
+        bgClass = "bg-green-200 text-green-900";
+      else if (span.role === "control_absent")
+        bgClass = "bg-red-200 text-red-900";
+      else if (span.role === "control_ineffective")
+        bgClass = "bg-yellow-200 text-yellow-900";
+      else if (span.role === "outcome_cue")
+        bgClass = "bg-gray-300 text-gray-900";
+      else if (span.role === "negation_cue")
+        bgClass = "bg-slate-300 text-slate-900";
 
       elements.push(
-        <mark key={`span-${idx}`} className={`px-1 rounded font-medium ${bgClass}`} title={span.role}>
+        <mark
+          key={`span-${idx}`}
+          className={`px-1 rounded font-medium ${bgClass}`}
+          title={span.role}
+        >
           {text.substring(span.start, span.end)}
-        </mark>
+        </mark>,
       );
       lastIndex = span.end;
     });
@@ -701,41 +747,61 @@ function SingleStatementResult({ result }) {
 
     return elements;
   };
-  
+
   const getSpanColorClass = (role) => {
-    if (role === "energy_cue") return "bg-orange-100 text-orange-800 border-orange-200";
-    if (role === "release_cue") return "bg-pink-100 text-pink-800 border-pink-200";
-    if (role === "exposure_cue") return "bg-purple-100 text-purple-800 border-purple-200";
-    if (role === "control_present") return "bg-green-100 text-green-800 border-green-200";
-    if (role === "control_absent") return "bg-red-100 text-red-800 border-red-200";
-    if (role === "control_ineffective") return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    if (role === "outcome_cue") return "bg-gray-200 text-gray-800 border-gray-300";
-    if (role === "negation_cue") return "bg-slate-200 text-slate-800 border-slate-300";
+    if (role === "energy_cue")
+      return "bg-orange-100 text-orange-800 border-orange-200";
+    if (role === "release_cue")
+      return "bg-pink-100 text-pink-800 border-pink-200";
+    if (role === "exposure_cue")
+      return "bg-purple-100 text-purple-800 border-purple-200";
+    if (role === "control_present")
+      return "bg-green-100 text-green-800 border-green-200";
+    if (role === "control_absent")
+      return "bg-red-100 text-red-800 border-red-200";
+    if (role === "control_ineffective")
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    if (role === "outcome_cue")
+      return "bg-gray-200 text-gray-800 border-gray-300";
+    if (role === "negation_cue")
+      return "bg-slate-200 text-slate-800 border-slate-300";
     return "bg-gray-100 text-gray-800 border-gray-200";
   };
 
   return (
     <div className="space-y-4">
       {/* 1. VERDICT BANNER */}
-      <div className={`rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-md ${bannerClass}`}>
+      <div
+        className={`rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-md ${bannerClass}`}
+      >
         <div className="flex items-center gap-4">
           <div className="p-3 bg-white/20 backdrop-blur-sm rounded-full">
             {verdictIcon}
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider opacity-80 mb-1">Verdict</p>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">{verdict}</h2>
-            <p className="text-sm font-medium opacity-90 capitalize">{verdict.replace(/_/g, ' ').toLowerCase()} event</p>
+            <p className="text-xs font-bold uppercase tracking-wider opacity-80 mb-1">
+              Verdict
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+              {verdict}
+            </h2>
+            <p className="text-sm font-medium opacity-90 capitalize">
+              {verdict.replace(/_/g, " ").toLowerCase()} event
+            </p>
           </div>
         </div>
 
         <div className="flex flex-col items-start md:items-center px-0 md:px-6 border-t md:border-t-0 md:border-l md:border-r border-white/20 py-3 md:py-0 w-full md:w-auto">
-          <p className="text-xs font-bold uppercase tracking-wider opacity-80 mb-1">Confidence</p>
+          <p className="text-xs font-bold uppercase tracking-wider opacity-80 mb-1">
+            Confidence
+          </p>
           <div className="text-2xl sm:text-3xl font-black">{confidence}</div>
           <div className="flex items-center gap-2 mt-1 text-[11px] font-semibold opacity-80">
             <span>Route: {result?.verdict_detail?.route || "Unknown"}</span>
             <span>•</span>
-            <span>Layers: {(result?.verdict_detail?.layers_agreed || []).join(", ")}</span>
+            <span>
+              Layers: {(result?.verdict_detail?.layers_agreed || []).join(", ")}
+            </span>
             <span>•</span>
             <span>Lang: {result?.meta?.language_detected || "Unknown"}</span>
           </div>
@@ -760,9 +826,11 @@ function SingleStatementResult({ result }) {
       {/* 2. DECISION PATH */}
       {result?.verdict_detail?.decision_path && (
         <div className="bg-slate-800 text-slate-200 rounded-lg p-3 font-mono text-[11px] sm:text-xs overflow-x-auto whitespace-nowrap flex items-center gap-3">
-          <span className="font-bold text-slate-400 shrink-0">DECISION PATH</span>
+          <span className="font-bold text-slate-400 shrink-0">
+            DECISION PATH
+          </span>
           <span className="text-slate-500">|</span>
-          <span>{result.verdict_detail.decision_path.replace('->', '→')}</span>
+          <span>{result.verdict_detail.decision_path.replace("->", "→")}</span>
         </div>
       )}
 
@@ -772,25 +840,36 @@ function SingleStatementResult({ result }) {
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-sm flex flex-col">
           <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
             <FileText size={16} className="text-teal-700" />
-            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">Evidence in Text</h3>
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
+              Evidence in Text
+            </h3>
           </div>
-          
+
           <div className="flex-1 bg-gray-50 rounded-lg p-4 border border-gray-100 text-sm md:text-base leading-relaxed text-gray-800 mb-4">
             {renderHighlightedText()}
           </div>
-          
+
           <div>
-            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">Detected Spans</h4>
+            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+              Detected Spans
+            </h4>
             <div className="flex flex-wrap gap-2">
               {(result?.spans || []).map((span, idx) => (
-                <div key={idx} className={`text-[11px] px-2 py-1 rounded-md border font-semibold flex items-center gap-1.5 ${getSpanColorClass(span.role)}`}>
-                  <span className="opacity-75">{span.role.replace(/_/g, ' ')}:</span>
+                <div
+                  key={idx}
+                  className={`text-[11px] px-2 py-1 rounded-md border font-semibold flex items-center gap-1.5 ${getSpanColorClass(span.role)}`}
+                >
+                  <span className="opacity-75">
+                    {span.role.replace(/_/g, " ")}:
+                  </span>
                   <span>"{span.text}"</span>
                   <span className="opacity-50 text-[9px]">({span.source})</span>
                 </div>
               ))}
               {(!result?.spans || result.spans.length === 0) && (
-                <span className="text-xs text-gray-500 italic">No specific spans detected.</span>
+                <span className="text-xs text-gray-500 italic">
+                  No specific spans detected.
+                </span>
               )}
             </div>
           </div>
@@ -800,31 +879,45 @@ function SingleStatementResult({ result }) {
         <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-100">
             <HelpCircle size={16} className="text-teal-700" />
-            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">The Four Questions (EEI)</h3>
+            <h3 className="text-sm font-bold text-gray-800 uppercase tracking-wide">
+              The Four Questions (EEI)
+            </h3>
           </div>
-          
+
           <div className="space-y-4">
             {[
               { label: "High Energy Present", key: "high_energy_present" },
               { label: "Energy Released", key: "energy_released" },
               { label: "Serious Injury", key: "serious_injury" },
-              { label: "Direct Control Present", key: "direct_control_present" }
+              {
+                label: "Direct Control Present",
+                key: "direct_control_present",
+              },
             ].map((q) => {
               const fact = result?.eei_facts?.[q.key];
               if (!fact) return null;
-              
+
               return (
-                <div key={q.key} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                <div
+                  key={q.key}
+                  className="bg-gray-50 rounded-lg p-3 border border-gray-100"
+                >
                   <div className="flex justify-between items-center mb-1.5">
-                    <span className="text-xs font-bold text-gray-700">{q.label}</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${fact.value ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
-                      {fact.value ? 'TRUE' : 'FALSE'}
+                    <span className="text-xs font-bold text-gray-700">
+                      {q.label}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded ${fact.value ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}`}
+                    >
+                      {fact.value ? "TRUE" : "FALSE"}
                     </span>
                   </div>
                   {fact.span && (
                     <div className="text-[11px] text-gray-500 italic flex justify-between items-end mt-2">
                       <span className="line-clamp-2">"{fact.span}"</span>
-                      <span className="text-[9px] uppercase bg-gray-200 px-1.5 py-0.5 rounded ml-2 shrink-0">{fact.source}</span>
+                      <span className="text-[9px] uppercase bg-gray-200 px-1.5 py-0.5 rounded ml-2 shrink-0">
+                        {fact.source}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -840,24 +933,46 @@ function SingleStatementResult({ result }) {
         <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
             <Layers size={15} className="text-teal-700" />
-            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Safety Knowledge</h3>
+            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+              Safety Knowledge
+            </h3>
           </div>
           <div className="space-y-3 text-xs">
             <div>
               <p className="font-semibold text-gray-500 mb-0.5">Hazard</p>
-              <p className="font-bold text-gray-900 capitalize">{(result?.safety_knowledge?.hazard || "Unknown").replace(/_/g, ' ')}</p>
+              <p className="font-bold text-gray-900 capitalize">
+                {(result?.safety_knowledge?.hazard || "Unknown").replace(
+                  /_/g,
+                  " ",
+                )}
+              </p>
             </div>
             <div>
-              <p className="font-semibold text-gray-500 mb-0.5">Required Barrier</p>
-              <p className="font-bold text-gray-900 capitalize">{(result?.safety_knowledge?.barrier || "Unknown").replace(/_/g, ' ')}</p>
+              <p className="font-semibold text-gray-500 mb-0.5">
+                Required Barrier
+              </p>
+              <p className="font-bold text-gray-900 capitalize">
+                {(result?.safety_knowledge?.barrier || "Unknown").replace(
+                  /_/g,
+                  " ",
+                )}
+              </p>
             </div>
             <div>
               <p className="font-semibold text-gray-500 mb-0.5">LSR / Rules</p>
-              <p className="font-bold text-gray-900">{(result?.safety_knowledge?.lsr || []).join(", ") || "None"}</p>
+              <p className="font-bold text-gray-900">
+                {(result?.safety_knowledge?.lsr || []).join(", ") || "None"}
+              </p>
             </div>
             <div>
-              <p className="font-semibold text-gray-500 mb-0.5">Potential Consequence</p>
-              <p className="font-bold text-gray-900 capitalize">{(result?.safety_knowledge?.potential_consequence || "Unknown").replace(/_/g, ' ')}</p>
+              <p className="font-semibold text-gray-500 mb-0.5">
+                Potential Consequence
+              </p>
+              <p className="font-bold text-gray-900 capitalize">
+                {(
+                  result?.safety_knowledge?.potential_consequence || "Unknown"
+                ).replace(/_/g, " ")}
+              </p>
             </div>
           </div>
         </div>
@@ -866,20 +981,38 @@ function SingleStatementResult({ result }) {
         <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
             <Zap size={15} className="text-teal-700" />
-            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Energy</h3>
+            <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+              Energy
+            </h3>
           </div>
           <div className="space-y-3 text-xs">
             <div>
               <p className="font-semibold text-gray-500 mb-0.5">Type</p>
-              <p className="font-bold text-gray-900 capitalize">{(result?.energy?.type || "Unknown").replace(/_/g, ' ')}</p>
+              <p className="font-bold text-gray-900 capitalize">
+                {(result?.energy?.type || "Unknown").replace(/_/g, " ")}
+              </p>
             </div>
             <div>
-              <p className="font-semibold text-gray-500 mb-0.5">Estimate (Joules)</p>
-              <p className="font-bold text-gray-900">{result?.energy?.estimate_j !== null && result?.energy?.estimate_j !== undefined ? result.energy.estimate_j.toLocaleString() : "—"}</p>
+              <p className="font-semibold text-gray-500 mb-0.5">
+                Estimate (Joules)
+              </p>
+              <p className="font-bold text-gray-900">
+                {result?.energy?.estimate_j !== null &&
+                result?.energy?.estimate_j !== undefined
+                  ? result.energy.estimate_j.toLocaleString()
+                  : "—"}
+              </p>
             </div>
             <div>
-              <p className="font-semibold text-gray-500 mb-0.5">SIF Threshold (Joules)</p>
-              <p className="font-bold text-gray-900">{result?.energy?.threshold_j !== null && result?.energy?.threshold_j !== undefined ? result.energy.threshold_j.toLocaleString() : "—"}</p>
+              <p className="font-semibold text-gray-500 mb-0.5">
+                SIF Threshold (Joules)
+              </p>
+              <p className="font-bold text-gray-900">
+                {result?.energy?.threshold_j !== null &&
+                result?.energy?.threshold_j !== undefined
+                  ? result.energy.threshold_j.toLocaleString()
+                  : "—"}
+              </p>
             </div>
           </div>
         </div>
@@ -889,7 +1022,9 @@ function SingleStatementResult({ result }) {
           <div>
             <div className="flex items-center gap-2 mb-3 border-b border-gray-100 pb-2">
               <Activity size={15} className="text-teal-700" />
-              <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Unsafe Act / Condition</h3>
+              <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                Unsafe Act / Condition
+              </h3>
             </div>
             <div className="space-y-3 mt-4">
               {result?.uc_ua?.unsafe_act && (
@@ -904,22 +1039,29 @@ function SingleStatementResult({ result }) {
                   <MapPin size={16} />
                 </div>
               )}
-              {!result?.uc_ua?.unsafe_act && !result?.uc_ua?.unsafe_condition && (
-                <div className="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-lg font-bold text-sm text-center">
-                  None detected
-                </div>
-              )}
+              {!result?.uc_ua?.unsafe_act &&
+                !result?.uc_ua?.unsafe_condition && (
+                  <div className="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-lg font-bold text-sm text-center">
+                    None detected
+                  </div>
+                )}
             </div>
           </div>
-          
+
           <div className="mt-4 pt-3 border-t border-gray-100">
             <div className="flex justify-between items-center text-xs">
               <span className="font-semibold text-gray-500">Confidence</span>
-              <span className="font-bold text-gray-900">{result?.uc_ua?.confidence ? (result.uc_ua.confidence * 100).toFixed(0) + "%" : "N/A"}</span>
+              <span className="font-bold text-gray-900">
+                {result?.uc_ua?.confidence
+                  ? (result.uc_ua.confidence * 100).toFixed(0) + "%"
+                  : "N/A"}
+              </span>
             </div>
             <div className="flex justify-between items-center text-xs mt-1">
               <span className="font-semibold text-gray-500">Basis</span>
-              <span className="font-bold text-gray-900 uppercase">{result?.uc_ua?.basis || "N/A"}</span>
+              <span className="font-bold text-gray-900 uppercase">
+                {result?.uc_ua?.basis || "N/A"}
+              </span>
             </div>
           </div>
         </div>
@@ -939,15 +1081,11 @@ function BatchResultsView({ data }) {
     data?.reports ||
     (Array.isArray(data) ? data : []);
 
-  const total =
-    data?.total ??
-    evaluations.length;
+  const total = data?.total ?? evaluations.length;
 
   const highCount = evaluations.filter((item) => {
     const verdict = String(
-      item?.verdict ||
-        item?.sif_potential ||
-        ""
+      item?.verdict || item?.sif_potential || "",
     ).toLowerCase();
 
     return verdict.includes("high") || verdict.includes("h_sif");
@@ -955,12 +1093,14 @@ function BatchResultsView({ data }) {
 
   const mediumCount = evaluations.filter((item) => {
     const verdict = String(
-      item?.verdict ||
-        item?.sif_potential ||
-        ""
+      item?.verdict || item?.sif_potential || "",
     ).toLowerCase();
 
-    return verdict.includes("medium") || verdict.includes("p_sif") || verdict.includes("capacity");
+    return (
+      verdict.includes("medium") ||
+      verdict.includes("p_sif") ||
+      verdict.includes("capacity")
+    );
   }).length;
 
   return (
@@ -969,8 +1109,12 @@ function BatchResultsView({ data }) {
         <div className="flex items-center gap-2">
           <Zap className="text-[#00695c]" size={22} />
           <div>
-            <h2 className="text-base font-bold text-gray-900">Batch Analysis Results</h2>
-            <p className="text-xs text-gray-500">Results returned by the OILENS analysis engine</p>
+            <h2 className="text-base font-bold text-gray-900">
+              Batch Analysis Results
+            </h2>
+            <p className="text-xs text-gray-500">
+              Results returned by the OILENS analysis engine
+            </p>
           </div>
         </div>
         <span className="text-xs text-gray-400">{total} records processed</span>
@@ -978,15 +1122,21 @@ function BatchResultsView({ data }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="bg-gray-50 p-3 rounded-xl border border-gray-200">
-          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Records</span>
+          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            Total Records
+          </span>
           <p className="text-xl font-black text-gray-800">{total}</p>
         </div>
         <div className="bg-red-50 p-3 rounded-xl border border-red-200">
-          <span className="text-[11px] font-bold text-red-600 uppercase tracking-wider">High SIF Potential</span>
+          <span className="text-[11px] font-bold text-red-600 uppercase tracking-wider">
+            High SIF Potential
+          </span>
           <p className="text-xl font-black text-red-600">{highCount}</p>
         </div>
         <div className="bg-amber-50 p-3 rounded-xl border border-amber-200">
-          <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">Medium / Capacity Event</span>
+          <span className="text-[11px] font-bold text-amber-600 uppercase tracking-wider">
+            Medium / Capacity Event
+          </span>
           <p className="text-xl font-black text-amber-600">{mediumCount}</p>
         </div>
       </div>
@@ -1005,9 +1155,7 @@ function BatchResultsView({ data }) {
             <tbody className="divide-y divide-gray-100">
               {evaluations.map((item, index) => {
                 const verdict =
-                  item?.verdict ||
-                  item?.sif_potential ||
-                  "Analysis Complete";
+                  item?.verdict || item?.sif_potential || "Analysis Complete";
 
                 return (
                   <tr key={index} className="hover:bg-gray-50">
@@ -1018,10 +1166,14 @@ function BatchResultsView({ data }) {
                       {item?.text || item?.statement || item?.report || "—"}
                     </td>
                     <td className="p-3 text-slate-600">
-                      {item?.hazard || item?.detected_hazard || "Not identified"}
+                      {item?.hazard ||
+                        item?.detected_hazard ||
+                        "Not identified"}
                     </td>
                     <td className="p-3">
-                      <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-bold ${getBatchVerdictClass(verdict)}`}>
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-bold ${getBatchVerdictClass(verdict)}`}
+                      >
                         {formatVerdict(verdict)}
                       </span>
                     </td>
@@ -1034,9 +1186,12 @@ function BatchResultsView({ data }) {
       ) : (
         <div className="rounded-xl border border-dashed border-gray-300 p-8 text-center">
           <FileText size={28} className="mx-auto text-gray-300" />
-          <p className="mt-2 text-sm font-semibold text-gray-600">Analysis completed</p>
+          <p className="mt-2 text-sm font-semibold text-gray-600">
+            Analysis completed
+          </p>
           <p className="mt-1 text-xs text-gray-400">
-            The backend returned a response, but no batch result records were found in the expected fields.
+            The backend returned a response, but no batch result records were
+            found in the expected fields.
           </p>
         </div>
       )}
@@ -1047,16 +1202,30 @@ function BatchResultsView({ data }) {
 function formatVerdict(value) {
   const text = String(value || "");
   const lower = text.toLowerCase();
-  if (lower.includes("high") || lower.includes("h_sif")) return "HIGH SIF POTENTIAL";
-  if (lower.includes("medium") || lower.includes("p_sif") || lower.includes("capacity")) return "CAPACITY / P-SIF";
-  if (lower.includes("low") || lower.includes("l_sif")) return "LOW SIF POTENTIAL";
+  if (lower.includes("high") || lower.includes("h_sif"))
+    return "HIGH SIF POTENTIAL";
+  if (
+    lower.includes("medium") ||
+    lower.includes("p_sif") ||
+    lower.includes("capacity")
+  )
+    return "CAPACITY / P-SIF";
+  if (lower.includes("low") || lower.includes("l_sif"))
+    return "LOW SIF POTENTIAL";
   return text;
 }
 
 function getBatchVerdictClass(value) {
   const lower = String(value || "").toLowerCase();
-  if (lower.includes("high") || lower.includes("h_sif")) return "bg-red-50 text-red-700 border-red-200";
-  if (lower.includes("medium") || lower.includes("p_sif") || lower.includes("capacity")) return "bg-amber-50 text-amber-700 border-amber-200";
-  if (lower.includes("low") || lower.includes("l_sif")) return "bg-blue-50 text-blue-700 border-blue-200";
+  if (lower.includes("high") || lower.includes("h_sif"))
+    return "bg-red-50 text-red-700 border-red-200";
+  if (
+    lower.includes("medium") ||
+    lower.includes("p_sif") ||
+    lower.includes("capacity")
+  )
+    return "bg-amber-50 text-amber-700 border-amber-200";
+  if (lower.includes("low") || lower.includes("l_sif"))
+    return "bg-blue-50 text-blue-700 border-blue-200";
   return "bg-slate-50 text-slate-700 border-slate-200";
 }
