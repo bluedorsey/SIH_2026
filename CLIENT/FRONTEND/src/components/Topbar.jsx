@@ -86,7 +86,7 @@ export default function Topbar({ onOpenSidebar, pageTitle = 'Home' }) {
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-linear-to-r from-teal-900 to-slate-900 text-teal-300 border border-teal-800/50 shadow-xs">
             <Sparkles size={13} className="text-teal-400 animate-pulse" />
             <span className="font-extrabold tracking-wider uppercase text-[11px]">
-              OIL HSSE
+              OILENS  
             </span>
           </div>
           
