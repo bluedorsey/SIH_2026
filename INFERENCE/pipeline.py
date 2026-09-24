@@ -19,6 +19,7 @@ from .knowledge import detect_hazard
 from .models import get_extractor, get_heads
 from .normalise import normalise
 from .scope import evidence_check, get_scope_gate
+from .laya_gate import get_laya_gate
 from .semantic import get_semantic, hazard_entry
 from .uc_ua import classify as classify_uc_ua
 from .rules import detect_language, detect_statement_type, find_spans, negation_scope
@@ -47,6 +48,28 @@ def analyse(text: str, *, report_id: str | None = None, meta: dict | None = None
     language = detect_language(text)
     statement_type = detect_statement_type(text)
     rule_spans = find_spans(text)
+
+    # ---- layer 1a: Laya gate. A non-autoregressive decision model that answers structured
+    # questions ("is this routine operations?") in a single forward pass. Runs BEFORE the
+    # scope gate and GLiNER — if Laya is confident the text is routine/admin, the pipeline
+    # skips directly to NON_EVENT without loading any heavy models. Fault-tolerant: if the
+    # `laya` package is not installed, `available` stays False and nothing changes.
+    laya = get_laya_gate() if use_models else None
+    laya_result = laya.check(text) if (laya and laya.available) else {
+        "reject": False, "event_type": None, "p_routine": None,
+        "p_safety": None, "reason": "laya gate unavailable"
+    }
+    if laya_result["reject"]:
+        log.info("Laya gate rejected: %s", laya_result["reason"])
+        laya_scope = {
+            "reject": True,
+            "p_out_of_scope": laya_result.get("p_routine"),
+            "veto": None,
+            "stage": "laya_gate",
+            "reason": laya_result["reason"],
+        }
+        return _restore(_out_of_scope(text, report_id, meta, language, statement_type,
+                                       rule_spans, laya_scope, None, None), norm)
 
     # ---- layer 1b: scope gate. Cheapest question first - is this a safety report at all?
     # Rejected rows skip GLiNER entirely, which is most of the compute when real traffic is
@@ -235,19 +258,22 @@ def _out_of_scope(text, report_id, meta, language, statement_type, rule_spans, s
                "source": f"not_asked({stage})"}
     head_pred = head_pred or {}
     layers = (["scope_gate", "rules", "gliner", "setfit"] if stage == "evidence_gate"
+              else ["laya_gate"] if stage == "laya_gate"
               else ["scope_gate"])
+    # Laya gate rejections are NON_EVENT (routine safe operations), not OUT_OF_SCOPE
+    verdict_label = "NON_EVENT" if stage == "laya_gate" else "OUT_OF_SCOPE"
     return {
         "report_id": report_id or "SIF-" + hashlib.sha1(text.encode("utf-8")).hexdigest()[:12],
         "input": {"text": text, "chars": len(text)},
         "meta": {**{"site": None, "date": None, "activity": None, "department": None}, **meta,
                  "language_detected": language, "statement_type": statement_type},
-        "verdict": {"label": "OUT_OF_SCOPE",
+        "verdict": {"label": verdict_label,
                     "confidence": round(scope["p_out_of_scope"] or 0.0, 3),
-                    "conformal_set": ["OUT_OF_SCOPE"],
+                    "conformal_set": [verdict_label],
                     "route": "gated",
                     "layers_agreed": layers,
                     "llm_invoked": False,
-                    "decision_path": f"{stage} -> OUT_OF_SCOPE ({scope['reason']})",
+                    "decision_path": f"{stage} -> {verdict_label} ({scope['reason']})",
                     "head_verdict": (head_pred.get("verdict") or {}).get("label"),
                     "head_confidence": (head_pred.get("verdict") or {}).get("confidence")},
         "eei_facts": {"high_energy_present": dict(unknown), "energy_released": dict(unknown),
@@ -269,10 +295,11 @@ def _out_of_scope(text, report_id, meta, language, statement_type, rule_spans, s
         "review": {"required": False, "reason": None, "human_reviewed": False, "reviewer_verdict": None},
         "provenance": {
             "pipeline_version": PIPELINE_VERSION, "package_version": __version__,
-            "models": {"gliner": (extractor.source if extractor and extractor.available else None),
-                       "heads": (",".join(heads.names) if heads and heads.available else None),
+            "models": {"gliner": (extractor.source if extractor and getattr(extractor, 'available', False) else None),
+                       "heads": (",".join(heads.names) if heads and getattr(heads, 'available', False) else None),
                        "llm": None,
-                       "scope_gate": (f"threshold={gate.threshold}" if gate and gate.available else None)},
+                       "scope_gate": (f"threshold={gate.threshold}" if gate and getattr(gate, 'available', False) else None),
+                       "laya_gate": (stage == "laya_gate") or None},
             "head_predictions": {k: {"label": v["label"], "confidence": v["confidence"]}
                                  for k, v in head_pred.items()},
             "normalisation": [],

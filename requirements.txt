@@ -21,6 +21,7 @@ sentence-transformers>=3.0
 setfit>=1.1
 accelerate>=0.30
 gliner>=0.2.13
+laya                     # convaiinnovations/laya — non-autoregressive scope pre-filter
 sentencepiece>=0.2
 protobuf>=4.25
 

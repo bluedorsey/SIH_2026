@@ -33,6 +33,22 @@ FAST_LANE_MIN_CONFIDENCE = 0.75
 REVIEW_MAX_CONFIDENCE = 0.55        # below this a human is asked to look
 CONFORMAL_ALPHA = 0.10              # 90 % coverage target
 
+# ---- laya gate (pre-scope) -------------------------------------------------
+# A non-autoregressive decision model (convaiinnovations/laya) that answers
+# structured questions about the statement in a single forward pass (~33 ms GPU).
+# Runs BEFORE the scope gate. If Laya confidently classifies the statement as
+# routine operations / administrative, the pipeline skips directly to NON_EVENT.
+# The model is loaded via `pip install laya`; no local model path is needed —
+# Laya auto-downloads the checkpoint from HuggingFace on first use and caches it
+# in the default HuggingFace cache directory (~/.cache/huggingface/).
+# To use a LOCAL model path instead, set the env var:
+#   HF_HOME=E:\SIH_26\SERVER\Classfication\Models\RAW\laya
+# or:
+#   LAYA_MODEL_PATH=E:\SIH_26\SERVER\Classfication\Models\RAW\laya
+LAYA_ENABLED = True                 # kill switch; False -> gate never fires
+LAYA_MODEL = "multilingual"         # convaiinnovations/laya-multilingual (322M params, 100+ langs, mmBERT-base)
+LAYA_ROUTINE_THRESHOLD = 0.70       # reject when p(routine) exceeds this
+
 # ---- scope gate -----------------------------------------------------------
 # A logistic head on the frozen encoder, run BEFORE GLiNER. Rejects text that is not a safety
 # observation at all (canteen, IT, payroll). Asymmetric on purpose: a false reject is a dead

@@ -101,15 +101,11 @@ class ScopeGate:
 def hard_evidence(text: str, rule_spans: list[dict]) -> str | None:
     """The deterministic reason a text is a safety observation, or None.
 
-    A safety-domain word (hazard, barrier, PPE, site or "unsafe"/"khatra" itself) or a
-    hand-written release / outcome span. Generic negations ("nahi tha", "loose", "empty")
+    A hand-written release / outcome span. Generic negations ("nahi tha", "loose", "empty")
     are span roles but not evidence - "Mess mein paratha nahi tha" is a control_absent span
     and not a safety report. Mined-lexicon spans never count."""
-    word = safety_vocab_hit(text)
-    if word:
-        return f"safety vocabulary {word!r}"
     for s in rule_spans:
-        if (s["role"] in SCOPE_VETO_ROLES + ("energy_cue",)
+        if (s["role"] in SCOPE_VETO_ROLES
                 and s.get("source", "rules") in SCOPE_VETO_SOURCES
                 and not _GENERIC.fullmatch(s["text"].strip())):
             return f"rule span {s['role']}={s['text']!r}"
@@ -167,7 +163,12 @@ def evidence_check(text: str, scope: dict, rule_spans: list[dict], gliner_spans:
     if hard:
         evidence.append(hard)
     if hazard_name:
-        evidence.append(f"hazard {hazard_name}")
+        # A bare mention of a vehicle/truck shouldn't save a routine parking log
+        # if the scope model thinks it's out of scope and there's no other evidence.
+        if hazard_name == "vehicle_or_mobile_plant" and not any(r["role"] in ("release_cue", "control_absent") for r in rule_spans):
+            pass # ignore weak vehicle hazard
+        else:
+            evidence.append(f"hazard {hazard_name}")
     if semantic:
         evidence.append(f"semantic {semantic['hazard']}@{semantic['score']:.2f}")
     # 2. a number with a unit answered question 1 outright
