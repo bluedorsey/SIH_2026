@@ -25,7 +25,7 @@ export default function App() {
   const getPageTitle = (tab) => {
     switch (tab) {
       case 'risk-dashboard': return 'Risk Dashboard';
-      case 'triage': return 'SIF-Precursor Triage';
+      case 'triage': return 'Review';
       case 'analyse': return 'Analyse Statement';
       case 'patterns': return 'Precursor Patterns';
       case 'sites': return 'Sites & Activities';

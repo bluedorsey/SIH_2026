@@ -35,7 +35,7 @@ export default function Sidebar({ isOpen, onClose, activeTab, setActiveTab }) {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'analyse', label: 'Analyse Statement', icon: FileSearch },
-    { id: 'triage', label: 'Review ', icon: Layers,},
+    { id: 'triage', label: 'Review ', icon: Layers},
     { id: 'risk-dashboard', label: 'Risk Dashboard', icon: BarChart3 },
     { id: 'patterns', label: 'Precursor Patterns', icon: Network },
     { id: 'sites', label: 'Sites & Activities', icon: MapPin },
