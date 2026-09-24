@@ -59,3 +59,9 @@ _textcache/
 # Eval report output - regenerate with `python -m INFERENCE.run_all`
 /REPORTS/
 /sih_train_bundle
+
+#markdown files 
+comands.md
+explain.md
+FINAL_GO.md
+pipeline.md
