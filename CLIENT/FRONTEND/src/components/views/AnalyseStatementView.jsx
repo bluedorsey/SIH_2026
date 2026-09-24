@@ -69,9 +69,7 @@ export default function AnalyseStatementView() {
     },
   ];
 
-  // ---------------------------------------------------------
   // CSV PARSER
-  // ---------------------------------------------------------
 
   const parseCSV = (csvText) => {
     const lines = csvText
@@ -143,9 +141,7 @@ export default function AnalyseStatementView() {
     return parsed;
   };
 
-  // ---------------------------------------------------------
   // FILE UPLOAD
-  // ---------------------------------------------------------
 
   const handleFileUpload = (event) => {
     const file = event.target.files?.[0];
@@ -220,12 +216,15 @@ export default function AnalyseStatementView() {
     }
   };
 
-  // ---------------------------------------------------------
   // SINGLE REPORT ANALYSIS
-  // ---------------------------------------------------------
 
   const handleSingleAnalysis = async () => {
     if (!statement.trim() || loading) return;
+
+    if (!site.trim() || !location.trim()) {
+      setApiError("Site and Location are compulsory fields. Please provide both to continue.");
+      return;
+    }
 
     setLoading(true);
     setResult(null);
@@ -251,9 +250,7 @@ export default function AnalyseStatementView() {
     }
   };
 
-  // ---------------------------------------------------------
   // BATCH ANALYSIS
-  // ---------------------------------------------------------
 
   const handleBatchAnalysis = async () => {
     if (parsedData.length === 0 || loading) return;
@@ -287,9 +284,7 @@ export default function AnalyseStatementView() {
     }
   };
 
-  // ---------------------------------------------------------
   // MAIN ANALYSIS HANDLER
-  // ---------------------------------------------------------
 
   const handleAnalyse = async () => {
     if (analysisMode === "text") {
@@ -299,9 +294,7 @@ export default function AnalyseStatementView() {
     }
   };
 
-  // ---------------------------------------------------------
   // REMOVE FILE
-  // ---------------------------------------------------------
 
   const removeFile = () => {
     setUploadedFile(null);
@@ -311,9 +304,7 @@ export default function AnalyseStatementView() {
     setBatchResults(null);
   };
 
-  // ---------------------------------------------------------
   // CTRL + ENTER
-  // ---------------------------------------------------------
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -346,9 +337,7 @@ export default function AnalyseStatementView() {
     (analysisMode === "text" && !statement.trim()) ||
     (analysisMode === "file" && parsedData.length === 0);
 
-  // ---------------------------------------------------------
   // UI
-  // ---------------------------------------------------------
 
   return (
     <main className="flex-1 p-3 sm:p-4 md:p-5 space-y-4">
@@ -536,17 +525,23 @@ export default function AnalyseStatementView() {
             <div className="flex flex-wrap items-center gap-2.5">
               <input
                 type="text"
-                placeholder="Site name (e.g. Duliajan, Moran)"
+                placeholder="Site name (Required)*"
                 value={site}
-                onChange={(e) => setSite(e.target.value)}
-                className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-44"
+                onChange={(e) => {
+                  setSite(e.target.value);
+                  if (apiError.includes("compulsory fields")) setApiError("");
+                }}
+                className={`rounded-lg border px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-44 ${(!site.trim() && apiError.includes("compulsory fields")) ? 'border-red-400 ring-1 ring-red-400' : 'border-gray-200'}`}
               />
               <input
                 type="text"
-                placeholder="Location within site (e.g. Parking, Workshop, Department)"
+                placeholder="Location (Required)*"
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-64"
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  if (apiError.includes("compulsory fields")) setApiError("");
+                }}
+                className={`rounded-lg border px-3 py-1.5 text-xs text-gray-700 placeholder-gray-400 focus:border-teal-600 focus:outline-none sm:w-64 ${(!location.trim() && apiError.includes("compulsory fields")) ? 'border-red-400 ring-1 ring-red-400' : 'border-gray-200'}`}
               />
               <input
                 type="text"

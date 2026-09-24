@@ -38,6 +38,8 @@ def list_reports(session: Connection, filters: dict, pagination: dict) -> tuple[
         reports.c.report_id,
         reports.c.site_code,
         reports.c.ingested_at,
+        reports.c.raw_text,
+        reports.c.metadata,
         verdicts.c.verdict,
         verdicts.c.lsr_primary
     ).select_from(

@@ -143,15 +143,19 @@ export default function ReportsView() {
               <button 
                 onClick={() => {
                   const headers = ['Incident ID', 'Incident', 'Verdict', 'Date', 'Site', 'Location', 'LSR'];
-                  const rows = filteredReports.map(r => [
-                    r.report_id,
-                    `Incident Report - ${r.site_code || 'Unknown'}`,
-                    r.verdict || 'Unknown',
-                    new Date(r.ingested_at).toLocaleDateString(),
-                    r.site_code || 'Unknown',
-                    'N/A', // Location not in list API
-                    r.lsr_primary || 'N/A'
-                  ]);
+                  const rows = filteredReports.map(r => {
+                    const text = (r.raw_text || '').replace(/"/g, '""');
+                    const loc = r.metadata?.location || 'N/A';
+                    return [
+                      r.report_id,
+                      text || `Incident Report - ${r.site_code || 'Unknown'}`,
+                      r.verdict || 'Unknown',
+                      new Date(r.ingested_at).toLocaleDateString(),
+                      r.site_code || 'Unknown',
+                      loc,
+                      r.lsr_primary || 'N/A'
+                    ];
+                  });
                   const csvContent = [headers.join(','), ...rows.map(r => r.map(c => `"${c}"`).join(','))].join('\n');
                   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                   const link = document.createElement('a');
